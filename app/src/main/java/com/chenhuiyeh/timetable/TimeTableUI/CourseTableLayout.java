@@ -16,14 +16,14 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.chenhuiyeh.timetable.R;
+import com.chenhuiyeh.timetable.TimeTableUI.model.CourseInfo;
+import com.chenhuiyeh.timetable.TimeTableUI.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
-import me.yaoandy107.ntut_timetable.model.CourseInfo;
-import me.yaoandy107.ntut_timetable.model.StudentCourse;
 
 /**
  * Created by blackmaple on 2017/5/9.

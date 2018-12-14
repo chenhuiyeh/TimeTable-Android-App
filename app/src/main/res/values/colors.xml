@@ -5,6 +5,26 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFFF</color>
 
+        <color name="white">#FFFFFF</color>
+        <color name="darken">#333333</color>
+        <color name="cloud">#f9f9f9</color>
+        <color name="silver">#BDC3C7</color>
+
+        <array name="course_table">
+            <item>#ffccbc</item>
+            <item>#ffe0b2</item>
+            <item>#ffecb3</item>
+            <item>#fff9c4</item>
+            <item>#f0f4c3</item>
+            <item>#dcedc8</item>
+            <item>#c8e6c9</item>
+            <item>#b2dfdb</item>
+            <item>#b3e5fc</item>
+            <item>#bbdefb</item>
+            <item>#e1bee7</item>
+            <item>#f8bbd0</item>
+            <item>#ffcdd2</item>
+        </array>
 
     <string-array name="colors" translatable="false">
         <item>#99cc00</item>

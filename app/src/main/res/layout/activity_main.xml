@@ -6,26 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-   <androidx.appcompat.widget.Toolbar
-       android:layout_width="match_parent"
-       android:layout_height="?android:attr/actionBarSize"
-       android:background="@color/colorPrimary"
-       app:titleTextColor="@color/colorWhite"
-       android:id="@+id/ToolbarMain">
-   </androidx.appcompat.widget.Toolbar>
+   <!--<androidx.appcompat.widget.Toolbar-->
+       <!--android:layout_width="match_parent"-->
+       <!--android:layout_height="?android:attr/actionBarSize"-->
+       <!--android:background="@color/colorPrimary"-->
+       <!--app:titleTextColor="@color/colorWhite"-->
+       <!--android:id="@+id/ToolbarMain">-->
+   <!--</androidx.appcompat.widget.Toolbar>-->
 
-    <ListView
+
+    <com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ToolbarMain"
-        android:id="@+id/lvMain"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:dividerHeight="10dp"
-        android:divider="@null">
-
-    </ListView>
+        android:layout_height="match_parent"
+        android:id="@+id/courseTable"></com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout>
 
 </RelativeLayout>

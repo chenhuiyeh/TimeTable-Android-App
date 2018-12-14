@@ -1,27 +1,33 @@
 package com.chenhuiyeh.timetable.activities;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.activities.courses.CoursesActivity;
+import com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout;
+import com.chenhuiyeh.timetable.TimeTableUI.model.CourseInfo;
+import com.chenhuiyeh.timetable.TimeTableUI.model.StudentCourse;
+import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomMenuButton;
+import com.nightonke.boommenu.ButtonEnum;
+import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 
+import java.util.ArrayList;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ListView listView;
+    private ActionBar mActionBar;
+    private CourseTableLayout courseTable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,120 +35,78 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupUIViews();
-        initToolbar();
+//        initToolbar();
 
-        setUpListView();
     }
 
     private void setupUIViews() {
-        toolbar = findViewById(R.id.ToolbarMain);
-        listView = findViewById(R.id.lvMain);
-    }
+//        toolbar = findViewById(R.id.ToolbarMain);
+        courseTable = findViewById(R.id.courseTable);
+        mActionBar = getSupportActionBar();
+        assert mActionBar != null;
+        mActionBar.setDisplayHomeAsUpEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false);
+        LayoutInflater inflater = LayoutInflater.from(this);
 
-    private void initToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Time Table");
-    }
+        View actionBar = inflater.inflate(R.layout.custom_action_bar, null);
+        TextView mTitleTextView = (TextView)actionBar.findViewById(R.id.title_text);
+        mTitleTextView.setText("Time Table");
+        mActionBar.setCustomView(actionBar);
+        mActionBar.setDisplayShowCustomEnabled(true);
+        ((Toolbar)actionBar.getParent()).setContentInsetsAbsolute(0,0);
 
-    private void setUpListView() {
-        String[] title = getResources().getStringArray(R.array.Main);
-        String[] description = getResources().getStringArray(R.array.Description);
+        BoomMenuButton leftBmb = (BoomMenuButton)actionBar.findViewById(R.id.action_bar_left_bmb);
 
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, title, description);
+        leftBmb.setButtonEnum(ButtonEnum.TextOutsideCircle);
+        leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_3);
+        leftBmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_3);
+        for (int i = 0; i < leftBmb.getPiecePlaceEnum().pieceNumber(); i++){
+            leftBmb.addBuilder(BuilderManager.getTextOutsideCircleButtonBuilderWithDifferentPieceColor());
+        }
 
-        listView.setAdapter(simpleAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        StudentCourse studentCourse = new StudentCourse();
+        ArrayList<CourseInfo> courseInfoList = new ArrayList<>();
+
+        // Add course1 - sample1
+        CourseInfo customCourseInfo = new CourseInfo();
+        customCourseInfo.setName("Course 1");
+        customCourseInfo.setCourseTime("1 2", "", "2", "3", "4", "", "");
+        courseInfoList.add(customCourseInfo);
+
+        // Set timetable
+        studentCourse.setCourseList(courseInfoList);
+        courseTable.setStudentCourse(studentCourse);
+
+        courseTable.setTableInitializeListener(new CourseTableLayout.TableInitializeListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                switch(position) {
-                    case 0: {
-                        Intent intent = new Intent(MainActivity.this, WeekActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-                    case 1: {
-                        Intent intent = new Intent(MainActivity.this, CoursesActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-                    case 2: {
-                        Intent intent = new Intent(MainActivity.this, FacultyActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-                    case 3: {
-                        Intent intent = new Intent(MainActivity.this, ResourcesActivity.class);
-                        startActivity(intent);
-                        break;
-                    }
-
-
-
-                }
+            public void onTableInitialized(CourseTableLayout course_table) {
+                Toast.makeText(MainActivity.this, "Finish intialized", Toast.LENGTH_SHORT).show();
+            }
+        });
+        courseTable.setOnCourseClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CourseInfo item = (CourseInfo) view.getTag();
+                showInfoDialog(view.getId(), item.getName(), item);
             }
         });
     }
 
-    public class SimpleAdapter extends BaseAdapter {
 
-        private Context mContext;
-        private LayoutInflater mLayoutInflater;
-        private TextView title, description;
-        private String[] titleArray;
-        private String[] descriptionArray;
-        private ImageView mImageView;
 
-        public SimpleAdapter(Context context, String[] title, String[] description) {
-            this.mContext = context;
-            this.titleArray = title;
-            this.descriptionArray = description;
-            mLayoutInflater = LayoutInflater.from(mContext);
-        }
-
-        @Override
-        public int getCount() {
-            if (titleArray != null)
-                return titleArray.length;
-            else
-                return 0;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            if (titleArray != null)
-                return titleArray[i];
-            else
-                return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                view = mLayoutInflater.inflate(R.layout.main_activity_single_item, null);
-            }
-
-            title = view.findViewById(R.id.tvMain);
-            description = view.findViewById(R.id.tvDescription);
-            mImageView = view.findViewById(R.id.ivMain);
-
-            title.setText(titleArray[position]);
-            description.setText(descriptionArray[position]);
-
-            if (titleArray[position].equalsIgnoreCase("Timetable"))
-                mImageView.setImageResource(R.drawable.timetable);
-            else if (titleArray[position].equalsIgnoreCase("Courses"))
-                mImageView.setImageResource(R.drawable.book);
-            else if (titleArray[position].equalsIgnoreCase("Faculty"))
-                mImageView.setImageResource(R.drawable.ic_perm_contact_calendar);
-            else if (titleArray[position].equalsIgnoreCase("Resources"))
-                mImageView.setImageResource(R.drawable.settings);
-
-            return view;
-        }
+//    private void initToolbar() {
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setTitle("Time Table");
+//    }
+    private void showInfoDialog(int id, String courseName, CourseInfo course) {
+        String message = String.format(
+                "Course Name：", course.getName());
+        AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle(courseName)
+                .setMessage(message)
+                .setPositiveButton("Detail", null);
+        courseDialogBuilder.show();
     }
+
 }
