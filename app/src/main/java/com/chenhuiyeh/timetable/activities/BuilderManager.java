@@ -19,15 +19,28 @@ public class BuilderManager {
 
     private static int[] imageResources = new int[]{
             R.drawable.ic_email,
-            R.drawable.ic_settings,
-            R.drawable.ic_action_home
+            R.drawable.ic_action_book,
+            R.drawable.ic_settings
+    };
+
+    private static String[] stringTitles = new String[] {
+            "Inbox",
+            "Timetable",
+            "Settings"
     };
 
     private static int imageResourceIndex = 0;
 
+    private static int stringTitleIndex = 0;
+
     static int getImageResource() {
         if (imageResourceIndex >= imageResources.length) imageResourceIndex = 0;
         return imageResources[imageResourceIndex++];
+    }
+
+    static String getStringTitle() {
+        if (stringTitleIndex >= stringTitles.length) stringTitleIndex = 0;
+        return stringTitles[stringTitleIndex++];
     }
 
     static SimpleCircleButton.Builder getSimpleCircleButtonBuilder() {
@@ -61,7 +74,7 @@ public class BuilderManager {
     static TextInsideCircleButton.Builder getTextInsideCircleButtonBuilderWithDifferentPieceColor() {
         return new TextInsideCircleButton.Builder()
                 .normalImageRes(getImageResource())
-                .normalTextRes(R.string.text_inside_circle_button_text_normal)
+                .normalText(getStringTitle())
                 .pieceColor(Color.WHITE);
     }
 
@@ -83,7 +96,7 @@ public class BuilderManager {
     static TextOutsideCircleButton.Builder getTextOutsideCircleButtonBuilderWithDifferentPieceColor() {
         return new TextOutsideCircleButton.Builder()
                 .normalImageRes(getImageResource())
-                .normalTextRes(R.string.text_outside_circle_button_text_normal)
+                .normalText(getStringTitle())
                 .pieceColor(Color.WHITE);
     }
 

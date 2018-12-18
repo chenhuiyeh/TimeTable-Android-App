@@ -1,6 +1,7 @@
 package com.chenhuiyeh.timetable.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -8,10 +9,11 @@ import android.widget.Toast;
 
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout;
-import com.chenhuiyeh.timetable.TimeTableUI.model.CourseInfo;
-import com.chenhuiyeh.timetable.TimeTableUI.model.StudentCourse;
+import com.chenhuiyeh.timetable.TimeTableUI.coursetable.CourseTableLayout;
+import com.chenhuiyeh.timetable.TimeTableUI.coursetable.model.CourseInfo;
+import com.chenhuiyeh.timetable.TimeTableUI.coursetable.model.StudentCourse;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
@@ -25,6 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     private Toolbar toolbar;
     private ActionBar mActionBar;
     private CourseTableLayout courseTable;
@@ -35,13 +39,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupUIViews();
-//        initToolbar();
-
     }
 
     private void setupUIViews() {
-//        toolbar = findViewById(R.id.ToolbarMain);
         courseTable = findViewById(R.id.courseTable);
+
+        // action bar
         mActionBar = getSupportActionBar();
         assert mActionBar != null;
         mActionBar.setDisplayHomeAsUpEnabled(false);
@@ -58,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         BoomMenuButton leftBmb = (BoomMenuButton)actionBar.findViewById(R.id.action_bar_left_bmb);
 
         leftBmb.setButtonEnum(ButtonEnum.TextOutsideCircle);
-        leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_3);
-        leftBmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_3);
+        leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_2);
+        leftBmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_2);
         for (int i = 0; i < leftBmb.getPiecePlaceEnum().pieceNumber(); i++){
             leftBmb.addBuilder(BuilderManager.getTextOutsideCircleButtonBuilderWithDifferentPieceColor());
         }
@@ -68,11 +71,16 @@ public class MainActivity extends AppCompatActivity {
         StudentCourse studentCourse = new StudentCourse();
         ArrayList<CourseInfo> courseInfoList = new ArrayList<>();
 
-        // Add course1 - sample1
+        // Add empty courses - sample1
         CourseInfo customCourseInfo = new CourseInfo();
-        customCourseInfo.setName("Course 1");
-        customCourseInfo.setCourseTime("1 2", "", "2", "3", "4", "", "");
+        customCourseInfo.setName(" ");
+        customCourseInfo.setCourseTime("1 3 5 7 9", "1 3 5 7 9", "1 3 5 7 9", "1 3 5 7 9", "1 3 5 7 9", "1 3 5 7 9", "1 3 5 7 9");
         courseInfoList.add(customCourseInfo);
+
+        CourseInfo customCourseInfoEven = new CourseInfo();
+        customCourseInfoEven.setName("  ");
+        customCourseInfoEven.setCourseTime("2 4 6 8", "2 4 6 8", "2 4 6 8", "2 4 6 8", "2 4 6 8", "2 4 6 8", "2 4 6 8");
+        courseInfoList.add(customCourseInfoEven);
 
         // Set timetable
         studentCourse.setCourseList(courseInfoList);
@@ -88,9 +96,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 CourseInfo item = (CourseInfo) view.getTag();
-                showInfoDialog(view.getId(), item.getName(), item);
+//                showInfoDialog(view.getId(), item.getName(), item);
+                addCourseToTableDialog(view.getId());
             }
         });
+
     }
 
 
@@ -107,6 +117,13 @@ public class MainActivity extends AppCompatActivity {
                 .setMessage(message)
                 .setPositiveButton("Detail", null);
         courseDialogBuilder.show();
+    }
+
+    private void addCourseToTableDialog(int id) {
+        AlertDialog.Builder newCourseDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle("Add Course")
+                .setPositiveButton("Add", null); // add on click listener to add course
+        newCourseDialogBuilder.show();
     }
 
 }

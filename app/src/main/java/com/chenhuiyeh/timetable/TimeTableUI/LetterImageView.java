@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.Utils;
+package com.chenhuiyeh.timetable.TimeTableUI;
 
 import android.content.Context;
 import android.graphics.Canvas;

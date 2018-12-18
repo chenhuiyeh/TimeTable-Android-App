@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.Utils.LetterImageView;
+import com.chenhuiyeh.timetable.TimeTableUI.LetterImageView;
 import com.chenhuiyeh.timetable.data.Courses;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

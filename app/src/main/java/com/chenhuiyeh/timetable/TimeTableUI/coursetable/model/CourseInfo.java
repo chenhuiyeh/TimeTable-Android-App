@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.TimeTableUI.model;
+package com.chenhuiyeh.timetable.TimeTableUI.coursetable.model;
 
 public class CourseInfo {
     private String name = null;

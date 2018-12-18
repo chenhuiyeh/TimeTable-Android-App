@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.TimeTableUI.model;
+package com.chenhuiyeh.timetable.TimeTableUI.coursetable.model;
 
 import java.util.ArrayList;
 

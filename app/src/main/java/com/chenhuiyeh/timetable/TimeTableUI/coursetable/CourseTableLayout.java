@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.TimeTableUI;
+package com.chenhuiyeh.timetable.TimeTableUI.coursetable;
 
 import android.content.Context;
 import android.os.Build;
@@ -16,8 +16,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.TimeTableUI.model.CourseInfo;
-import com.chenhuiyeh.timetable.TimeTableUI.model.StudentCourse;
+import com.chenhuiyeh.timetable.TimeTableUI.coursetable.model.CourseInfo;
+import com.chenhuiyeh.timetable.TimeTableUI.coursetable.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,8 +138,6 @@ public class CourseTableLayout extends LinearLayout {
                     tableCell.setZ(5.0f);
                 }
                 cell_params.setMargins(5, 5, 5, 5);
-//                    tableCell.setBackgroundResource(R.drawable.shape);
-//                    tableCell.setElevation(20.0f);
                 tableCell.setLayoutParams(j == 0 ? title_col_params
                         : cell_params);
                 tableRow.addView(tableCell);
