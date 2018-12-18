@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.TimeTableUI.coursetable;
+package com.chenhuiyeh.timetable.TimeTableUI;
 
 import android.content.Context;
 import android.graphics.Color;

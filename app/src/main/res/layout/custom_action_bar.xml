@@ -9,7 +9,7 @@
         android:id="@+id/action_bar_left_bmb"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        app:bmb_backgroundEffect="false" />
+        app:bmb_backgroundEffect="false"/>
 
     <TextView
         android:id="@+id/title_text"
