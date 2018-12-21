@@ -4,20 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.main.MainActivity">
 
-   <!--<androidx.appcompat.widget.Toolbar-->
-       <!--android:layout_width="match_parent"-->
-       <!--android:layout_height="?android:attr/actionBarSize"-->
-       <!--android:background="@color/colorPrimary"-->
-       <!--app:titleTextColor="@color/colorWhite"-->
-       <!--android:id="@+id/ToolbarMain">-->
-   <!--</androidx.appcompat.widget.Toolbar>-->
-
-
-    <com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/courseTable"></com.chenhuiyeh.timetable.TimeTableUI.CourseTableLayout>
+        android:id="@+id/parentLayout"></FrameLayout>
 
 </RelativeLayout>

@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.Utils.LetterImageView;
+import com.chenhuiyeh.timetable.ui.Utils.LetterImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

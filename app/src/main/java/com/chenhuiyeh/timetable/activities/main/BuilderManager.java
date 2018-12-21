@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.activities;
+package com.chenhuiyeh.timetable.activities.main;
 
 import android.graphics.Color;
 import android.util.Pair;
@@ -19,15 +19,28 @@ public class BuilderManager {
 
     private static int[] imageResources = new int[]{
             R.drawable.ic_email,
-            R.drawable.ic_settings,
-            R.drawable.ic_action_home
+            R.drawable.ic_action_book,
+            R.drawable.ic_list
     };
 
     private static int imageResourceIndex = 0;
 
+    private static String[] stringCaptions = new String[] {
+            "Inbox",
+            "TimeTable",
+            "My Courses"
+    };
+
+    private static int stringCaptionsIndex = 0;
+
     static int getImageResource() {
         if (imageResourceIndex >= imageResources.length) imageResourceIndex = 0;
         return imageResources[imageResourceIndex++];
+    }
+
+    static String getStringCaptions() {
+        if (stringCaptionsIndex >= stringCaptions.length) stringCaptionsIndex = 0;
+        return stringCaptions[stringCaptionsIndex++];
     }
 
     static SimpleCircleButton.Builder getSimpleCircleButtonBuilder() {
@@ -68,7 +81,11 @@ public class BuilderManager {
     static TextOutsideCircleButton.Builder getTextOutsideCircleButtonBuilder() {
         return new TextOutsideCircleButton.Builder()
                 .normalImageRes(getImageResource())
-                .normalTextRes(R.string.text_outside_circle_button_text_normal);
+                .normalText(getStringCaptions())
+                .normalColorRes(R.color.colorPrimary)
+                .highlightedColorRes(R.color.colorAccent)
+                .unableColorRes(R.color.colorPrimary)
+                .pieceColor(Color.WHITE);
     }
 
     static TextOutsideCircleButton.Builder getSquareTextOutsideCircleButtonBuilder() {
@@ -83,7 +100,7 @@ public class BuilderManager {
     static TextOutsideCircleButton.Builder getTextOutsideCircleButtonBuilderWithDifferentPieceColor() {
         return new TextOutsideCircleButton.Builder()
                 .normalImageRes(getImageResource())
-                .normalTextRes(R.string.text_outside_circle_button_text_normal)
+                .normalText(getStringCaptions())
                 .pieceColor(Color.WHITE);
     }
 

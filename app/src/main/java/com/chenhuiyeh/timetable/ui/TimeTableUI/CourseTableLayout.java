@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.TimeTableUI;
+package com.chenhuiyeh.timetable.ui.TimeTableUI;
 
 import android.content.Context;
 import android.os.Build;
@@ -16,8 +16,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.TimeTableUI.model.CourseInfo;
-import com.chenhuiyeh.timetable.TimeTableUI.model.StudentCourse;
+import com.chenhuiyeh.timetable.ui.TimeTableUI.model.CourseInfo;
+import com.chenhuiyeh.timetable.ui.TimeTableUI.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
