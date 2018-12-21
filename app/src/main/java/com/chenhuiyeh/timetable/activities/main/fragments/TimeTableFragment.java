@@ -87,7 +87,7 @@ public class TimeTableFragment extends Fragment {
         courseTable.setTableInitializeListener(new CourseTableLayout.TableInitializeListener() {
             @Override
             public void onTableInitialized(CourseTableLayout course_table) {
-                Toast.makeText(getActivity(), "Finish intialized", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Finish intialized", Toast.LENGTH_SHORT).show();
             }
         });
         courseTable.setOnCourseClickListener(new View.OnClickListener() {

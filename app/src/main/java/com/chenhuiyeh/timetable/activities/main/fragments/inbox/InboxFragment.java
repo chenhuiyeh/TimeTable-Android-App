@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.activities.main.fragments;
+package com.chenhuiyeh.timetable.activities.main.fragments.inbox;
 
 import android.content.Context;
 import android.net.Uri;

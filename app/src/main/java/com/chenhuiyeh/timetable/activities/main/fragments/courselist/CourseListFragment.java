@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.activities.main.fragments;
+package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 
 import android.content.Context;
 import android.net.Uri;
@@ -66,6 +66,7 @@ public class CourseListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final View rootView = inflater.inflate(R.layout.fragment_course_list, container, false);
         return inflater.inflate(R.layout.fragment_course_list, container, false);
     }
 

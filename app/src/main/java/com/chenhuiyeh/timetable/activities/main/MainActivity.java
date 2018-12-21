@@ -2,39 +2,38 @@ package com.chenhuiyeh.timetable.activities.main;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.activities.main.fragments.CourseListFragment;
-import com.chenhuiyeh.timetable.activities.main.fragments.InboxFragment;
+import com.chenhuiyeh.timetable.activities.main.fragments.courselist.CourseListFragment;
+import com.chenhuiyeh.timetable.activities.main.fragments.inbox.InboxFragment;
 import com.chenhuiyeh.timetable.activities.main.fragments.TimeTableFragment;
-import com.chenhuiyeh.timetable.ui.TimeTableUI.CourseTableLayout;
-import com.chenhuiyeh.timetable.ui.TimeTableUI.model.CourseInfo;
-import com.chenhuiyeh.timetable.ui.TimeTableUI.model.StudentCourse;
+import com.nightonke.boommenu.BoomButtons.BoomButton;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
+import com.nightonke.boommenu.OnBoomListenerAdapter;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 
-import java.util.ArrayList;
-
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity implements InboxFragment.OnFragmentInteractionListener,
     CourseListFragment.OnFragmentInteractionListener{
+    private static final String TAG = "MainActivity";
 
     private InboxFragment inboxFragment;
     private TimeTableFragment timeTableFragment;
     private CourseListFragment courseListFragment;
 
     private ActionBar mActionBar;
+    private BoomMenuButton leftBmb;
 
     private View actionBar;
     private TextView mTitleTextView;
@@ -46,6 +45,27 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
 
         setupUIViews();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            super.onBackPressed();
+            Log.d(TAG, "onBackPressed: count is 0");
+            getSupportFragmentManager().popBackStack();
+        } else {
+            Log.d(TAG, "onBackPressed: return to timetable");
+            returnToTimetable();
+        }
+    }
+
+    public boolean returnToTimetable() {
+        if (timeTableFragment.isAdded())  return true;
+        setMainTitle(R.string.app_name);
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.parentLayout, timeTableFragment
+        ).commit();
+        return true;
     }
 
     private void setupUIViews() {
@@ -63,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
         mActionBar.setDisplayShowCustomEnabled(true);
         ((Toolbar)actionBar.getParent()).setContentInsetsAbsolute(0,0);
 
-        BoomMenuButton leftBmb = (BoomMenuButton)actionBar.findViewById(R.id.action_bar_left_bmb);
+        leftBmb = (BoomMenuButton)actionBar.findViewById(R.id.action_bar_left_bmb);
 
         leftBmb.setButtonEnum(ButtonEnum.TextOutsideCircle);
         leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_2);
@@ -72,7 +92,42 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
             leftBmb.addBuilder(BuilderManager.getTextOutsideCircleButtonBuilder());
         }
 
+        leftBmb.setOnBoomListener(new OnBoomListenerAdapter(){
+            @Override
+            public void onClicked(int index, BoomButton boomButton) {
+                super.onClicked(index, boomButton);
+                selectFragment(index);
+            }
+        });
         initFragment();
+    }
+
+    private boolean selectFragment(int index) {
+        TextOutsideCircleButton.Builder builder = (TextOutsideCircleButton.Builder) leftBmb.getBuilder(index);
+
+        if (index == 0) {
+            if (inboxFragment.isAdded()) return true;
+            setMainTitle(R.string.inbox_actionbar);
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.parentLayout, inboxFragment
+            ).commit();
+
+        } else if (index == 1) {
+            if (timeTableFragment.isAdded())  return true;
+            setMainTitle(R.string.app_name);
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.parentLayout, timeTableFragment
+            ).commit();
+
+        } else if (index == 2) {
+            if (courseListFragment.isAdded()) return true;
+            setMainTitle(R.string.course_list_actionbar);
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.parentLayout, courseListFragment
+            ).commit();
+        }
+
+        return true;
     }
 
 
