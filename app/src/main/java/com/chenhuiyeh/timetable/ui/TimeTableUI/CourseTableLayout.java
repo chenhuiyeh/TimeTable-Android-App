@@ -26,6 +26,8 @@ import java.util.Locale;
 import androidx.annotation.Nullable;
 
 public class CourseTableLayout extends LinearLayout {
+    private static final String TAG = "CourseTableLayout";
+
     private static final int TABLE_COL = 9;
     private static final int TABLE_ROW = 14;
     private boolean isInitialized = false;
@@ -210,16 +212,20 @@ public class CourseTableLayout extends LinearLayout {
             boolean isHaveTime = false;
             for (int i = 0; i < 7; i++) {
                 String time = item.getTimes()[i];
-                ArrayList<String> s = splitTime(time);
-                for (String t : s) {
-                    if (t.length() != 0) {
-                        int row = Integer.parseInt(t);
-                        int col = i + 1;
-                        isDisplayABCD = isDisplayABCD || row > 9;
-                        isDisplaySun = isDisplaySun || i == 6;
-                        isDisplaySat = isDisplaySat || i == 5;
-                        setTableCell(row, col, color_array[color_index], item);
-                        isHaveTime = true;
+                Log.d(TAG, "showCourse: time: " + time);
+                if(time!=null) {
+                    ArrayList<String> s = splitTime(time);
+                    for (String t : s) {
+                        if (t.length() != 0) {
+                            Log.d(TAG, "showCourse: t: " + t);
+                            int row = Integer.parseInt(t);
+                            int col = i + 1;
+                            isDisplayABCD = isDisplayABCD || row > 9;
+                            isDisplaySun = isDisplaySun || i == 6;
+                            isDisplaySat = isDisplaySat || i == 5;
+                            setTableCell(row, col, color_array[color_index], item);
+                            isHaveTime = true;
+                        }
                     }
                 }
             }
@@ -250,6 +256,7 @@ public class CourseTableLayout extends LinearLayout {
         }
         for (int i = 0; i < color_count; i++) {
             int random = (int) (Math.random() * defaoultColor.size());
+            Log.d(TAG, "getColorArray: " + random);
             colorArray[i] = defaoultColor.remove(random);
         }
         return colorArray;

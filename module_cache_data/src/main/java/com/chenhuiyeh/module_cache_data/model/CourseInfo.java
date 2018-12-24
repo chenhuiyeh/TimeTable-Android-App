@@ -3,6 +3,7 @@ package com.chenhuiyeh.module_cache_data.model;
 import com.chenhuiyeh.module_cache_data.TimeTableTypeConverters;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -15,18 +16,19 @@ import static com.chenhuiyeh.module_cache_data.model.CourseInfo.TABLE_NAME;
 public class CourseInfo {
     static final String TABLE_NAME = "course_table";
 
-    private String name = null;
+    @ColumnInfo
+    private String name;
 
     @PrimaryKey
     @NonNull
-    private String courseCode = null;
+    private String courseCode;
 
     @TypeConverters(TimeTableTypeConverters.class)
-    private String[] times = null;
+    private String[] times;
 
-    private String professor = null;
-    private String description = null;
-    private String location = null;
+    private String professor;
+    private String description;
+    private String location;
 
     @Ignore
     public CourseInfo(String name, String courseCode, String professor, String description, String location) {

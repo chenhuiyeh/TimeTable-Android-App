@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.ui.Utils.LetterImageView;
+import com.chenhuiyeh.timetable.ui.LetterImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;

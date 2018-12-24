@@ -8,7 +8,7 @@ public class TimeTableTypeConverters {
     @TypeConverter
     public String fromArray(String[] strings) {
         String string = "";
-        for(String s : strings) string += (s + " ");
+        for(int i = 0; i<strings.length; i ++) string += (strings[i] + " ");
 
         return string;
     }

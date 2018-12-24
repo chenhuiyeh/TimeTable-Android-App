@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
-import com.chenhuiyeh.timetable.ui.Utils.LetterImageView;
+import com.chenhuiyeh.timetable.ui.LetterImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;

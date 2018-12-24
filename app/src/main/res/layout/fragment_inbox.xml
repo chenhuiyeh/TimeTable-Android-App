@@ -3,12 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.main.fragments.inbox.InboxFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/inbox_recyclerview"></androidx.recyclerview.widget.RecyclerView>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fabInbox"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_playlist_add"
+        android:layout_margin="10dp"/>
 </FrameLayout>

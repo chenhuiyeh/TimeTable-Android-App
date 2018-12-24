@@ -51,12 +51,11 @@ public class CoursesRepository {
         return mCoursesDao.loadDataByIdFromDb(_id);
     }
 
-    public void saveData(List<CourseInfo> courses) {
+    public void saveData(CourseInfo ... courses) {
         executor.diskIO().execute(()->{
             if (courses == null) return;
             Log.d(TAG, "saveData: non null");
-            mCoursesDao.saveData((courses.toArray(new CourseInfo[courses.size()])));
-            Log.d(TAG, "saveData: saved data");
+            mCoursesDao.saveData(courses);
         });
     }
 
@@ -77,6 +76,14 @@ public class CoursesRepository {
         executor.diskIO().execute(()->{
             AppDatabase.getInstance(context).clearAllTables();
         });
+    }
+
+    public boolean isEmpty() {
+        executor.diskIO().execute(()->{
+            int num = mCoursesDao.getNumEntries();
+            if (num == 0) return;
+        });
+        return false;
     }
 
 

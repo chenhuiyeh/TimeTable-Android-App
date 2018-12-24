@@ -20,6 +20,7 @@ import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.module_cache_data.model.StudentCourse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,12 +48,13 @@ public class TimeTableFragment extends Fragment {
     private Button addButton;
     private Button cancelButton;
 
-    private ArrayList<CourseInfo>  courseInfoList= new ArrayList<>();
+    private List<CourseInfo> courseInfoList= new ArrayList<>();
     private StudentCourse studentCourse = new StudentCourse();
 
     private CoursesRepository coursesRepository;
 
     private AppExecutor executor;
+
 
     public TimeTableFragment() {
         // Required empty public constructor
@@ -88,9 +90,38 @@ public class TimeTableFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_time_table, container, false);
         courseTable = rootView.findViewById(R.id.courseTable);
 
+
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getActivity() != null && getActivity() instanceof MainActivity)
+            ((MainActivity)getActivity()).setMainTitle(R.string.app_name);
+
+        executor = AppExecutor.getInstance();
+
+        coursesRepository = CoursesRepository.getInstance(getActivity());
+            executor.diskIO().execute(() -> {
+                for (int i = 0; i < coursesRepository.loadDataFromDb().size(); i++) {
+                    Log.d(TAG, "added course" + coursesRepository.loadDataFromDb().get(i).getCourseCode() + "\n"
+                            + coursesRepository.loadDataFromDb().get(i).getTimes()[0] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[1] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[2] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[3] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[4] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[5] +
+                            coursesRepository.loadDataFromDb().get(i).getTimes()[6]);
+                }
+                studentCourse.setCourseList(coursesRepository.loadDataFromDb());
+            });
+
         // Set timetable
-        studentCourse.setCourseList(courseInfoList);
+//            studentCourse.setCourseList(courseInfoList);
         courseTable.setStudentCourse(studentCourse);
+//        updateCourseTable();
 
         courseTable.setTableInitializeListener(new CourseTableLayout.TableInitializeListener() {
             @Override
@@ -113,19 +144,6 @@ public class TimeTableFragment extends Fragment {
             }
         });
 
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (getActivity() != null && getActivity() instanceof MainActivity)
-            ((MainActivity)getActivity()).setMainTitle(R.string.app_name);
-
-        executor = AppExecutor.getInstance();
-
-        coursesRepository = CoursesRepository.getInstance(getActivity());
     }
 
     private void showAddCourseDialog(final int row, final int col) {
@@ -162,47 +180,60 @@ public class TimeTableFragment extends Fragment {
 
                 switch (col) {
                     case 1: {
-                        newCourse.setCourseTime(Integer.toString(row), "", "", "", "", "", "");
+                        newCourse.setTimes(new String[]{Integer.toString(row), "", "", "", "", "", ""});
                         break;
                     }
                     case 2: {
-                        newCourse.setCourseTime("", Integer.toString(row), "", "", "", "", "");
+                        newCourse.setTimes(new String[]{"", Integer.toString(row), "", "", "", "", ""});
                         break;
                     }
                     case 3: {
-                        newCourse.setCourseTime("", "", Integer.toString(row), "", "", "", "");
+                        newCourse.setTimes(new String[]{"", "", Integer.toString(row), "", "", "", ""});
                         break;
                     }
                     case 4: {
-                        newCourse.setCourseTime("", "", "", Integer.toString(row), "", "", "");
+                        newCourse.setTimes(new String[]{"", "", "", Integer.toString(row), "", "", ""});
                         break;
                     }
                     case 5: {
-                        newCourse.setCourseTime("", "", "", "", Integer.toString(row), "", "");
+                        newCourse.setTimes(new String[]{"", "", "", "", Integer.toString(row), "", ""});
                         break;
                     }
                     case 6: {
-                        newCourse.setCourseTime("", "", "", "", "", Integer.toString(row), "");
+                        newCourse.setTimes(new String[]{"", "", "", "", "", Integer.toString(row), ""});
                         break;
                     }
                     case 7: {
-                        newCourse.setCourseTime("", "", "", "", "", "", Integer.toString(row));
+                        newCourse.setTimes(new String[]{"", "", "", "", "", "", Integer.toString(row)});
                         break;
                     }
 
                 }
                 courseInfoList.add(newCourse);
                 Log.d(TAG, "onClick: " + newCourse.getName() + "added");
-                coursesRepository.saveData(courseInfoList);
+                coursesRepository.saveData(newCourse);
 
+//
                 executor.diskIO().execute(()->{
+                    for (int i = 0; i <coursesRepository.loadDataFromDb().size() ; i++) {
+                        Log.d(TAG, "added course" + coursesRepository.loadDataFromDb().get(i).getCourseCode() + "\n"
+                        + coursesRepository.loadDataFromDb().get(i).getTimes()[0] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[1] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[2] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[3] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[4] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[5] +
+                                coursesRepository.loadDataFromDb().get(i).getTimes()[6]);
+                    }
+
                     studentCourse.setCourseList(coursesRepository.loadDataFromDb());
                 });
 
-                studentCourse.setCourseList(courseInfoList);
+//                studentCourse.setCourseList(courseInfoList);
 
-                courseTable.setStudentCourse(studentCourse);
-                courseTable.updateTable();
+//                courseTable.setStudentCourse(studentCourse);
+//                courseTable.updateTable();
+                updateCourseTable();
 
                 alertDialog.dismiss();
             }
@@ -215,6 +246,11 @@ public class TimeTableFragment extends Fragment {
             }
         });
         alertDialog.show();
+    }
+
+    private void updateCourseTable() {
+        courseTable.setStudentCourse(studentCourse);
+        courseTable.updateTable();
     }
 
     private void showInfoDialog(int id, String courseName, CourseInfo course) {

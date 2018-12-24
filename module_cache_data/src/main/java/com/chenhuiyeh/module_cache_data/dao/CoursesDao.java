@@ -36,5 +36,8 @@ public interface CoursesDao {
     @Query("DELETE FROM course_table")
     void deleteTableContents();
 
+    @Query("SELECT COUNT(*) FROM course_table")
+    int getNumEntries();
+
 
 }
