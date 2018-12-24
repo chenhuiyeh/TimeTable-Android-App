@@ -16,18 +16,14 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.activities.main.fragments.model.CourseInfo;
-import com.chenhuiyeh.timetable.activities.main.fragments.model.StudentCourse;
+import com.chenhuiyeh.module_cache_data.model.CourseInfo;
+import com.chenhuiyeh.module_cache_data.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
-
-/**
- * Created by blackmaple on 2017/5/9.
- */
 
 public class CourseTableLayout extends LinearLayout {
     private static final int TABLE_COL = 9;

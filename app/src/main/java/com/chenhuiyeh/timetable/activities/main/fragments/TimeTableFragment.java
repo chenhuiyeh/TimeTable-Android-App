@@ -10,14 +10,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.chenhuiyeh.module_cache_data.AppExecutor;
+import com.chenhuiyeh.module_cache_data.repository.CoursesRepository;
 import com.chenhuiyeh.timetable.R;
+import com.chenhuiyeh.timetable.activities.main.MainActivity;
 import com.chenhuiyeh.timetable.ui.TimeTableUI.CourseBlock;
 import com.chenhuiyeh.timetable.ui.TimeTableUI.CourseTableLayout;
-import com.chenhuiyeh.timetable.activities.main.fragments.model.CourseInfo;
-import com.chenhuiyeh.timetable.activities.main.fragments.model.StudentCourse;
+import com.chenhuiyeh.module_cache_data.model.CourseInfo;
+import com.chenhuiyeh.module_cache_data.model.StudentCourse;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -42,10 +47,12 @@ public class TimeTableFragment extends Fragment {
     private Button addButton;
     private Button cancelButton;
 
-    private ArrayList<CourseInfo> courseInfoList = new ArrayList<>();
+    private ArrayList<CourseInfo>  courseInfoList= new ArrayList<>();
     private StudentCourse studentCourse = new StudentCourse();
 
+    private CoursesRepository coursesRepository;
 
+    private AppExecutor executor;
 
     public TimeTableFragment() {
         // Required empty public constructor
@@ -81,13 +88,7 @@ public class TimeTableFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_time_table, container, false);
         courseTable = rootView.findViewById(R.id.courseTable);
 
-//        // Add course1 - sample1
-//        CourseInfo customCourseInfo = new CourseInfo();
-//        customCourseInfo.setName("Course 1");
-//        customCourseInfo.setCourseTime("1 2", "", "2", "3", "4", "", "");
-//        courseInfoList.add(customCourseInfo);
-//
-//        // Set timetable
+        // Set timetable
         studentCourse.setCourseList(courseInfoList);
         courseTable.setStudentCourse(studentCourse);
 
@@ -115,6 +116,18 @@ public class TimeTableFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getActivity() != null && getActivity() instanceof MainActivity)
+            ((MainActivity)getActivity()).setMainTitle(R.string.app_name);
+
+        executor = AppExecutor.getInstance();
+
+        coursesRepository = CoursesRepository.getInstance(getActivity());
+    }
+
     private void showAddCourseDialog(final int row, final int col) {
         android.app.AlertDialog.Builder addCourseDialogBuilder = new android.app.AlertDialog.Builder(getActivity())
                 .setTitle(R.string.add_course_dialog_title);
@@ -129,8 +142,6 @@ public class TimeTableFragment extends Fragment {
         final EditText prof = dialogView.findViewById(R.id.add_course_prof);
         final EditText location = dialogView.findViewById(R.id.add_course_location);
         final EditText description = dialogView.findViewById(R.id.add_course_description);
-
-
 
         addCourseDialogBuilder.setView(dialogView);
 
@@ -148,29 +159,49 @@ public class TimeTableFragment extends Fragment {
                 String professorText = prof.getText().toString();
 
                 CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locationText);
-//                newCourse.setCourseTime("1 2", "", "2", "3", "4", "", "");
+
                 switch (col) {
-                    case 1: newCourse.setCourseTime(Integer.toString(row), "","","","","","");
-                            break;
-                    case 2: newCourse.setCourseTime("", Integer.toString(row),"","","","","");
+                    case 1: {
+                        newCourse.setCourseTime(Integer.toString(row), "", "", "", "", "", "");
                         break;
-                    case 3: newCourse.setCourseTime("", "",Integer.toString(row),"","","","");
+                    }
+                    case 2: {
+                        newCourse.setCourseTime("", Integer.toString(row), "", "", "", "", "");
                         break;
-                    case 4: newCourse.setCourseTime("", "","",Integer.toString(row),"","","");
+                    }
+                    case 3: {
+                        newCourse.setCourseTime("", "", Integer.toString(row), "", "", "", "");
                         break;
-                    case 5: newCourse.setCourseTime("", "","","",Integer.toString(row),"","");
+                    }
+                    case 4: {
+                        newCourse.setCourseTime("", "", "", Integer.toString(row), "", "", "");
                         break;
-                    case 6: newCourse.setCourseTime("", "","","","",Integer.toString(row),"");
+                    }
+                    case 5: {
+                        newCourse.setCourseTime("", "", "", "", Integer.toString(row), "", "");
                         break;
-                    case 7: newCourse.setCourseTime("", "","","","","",Integer.toString(row));
+                    }
+                    case 6: {
+                        newCourse.setCourseTime("", "", "", "", "", Integer.toString(row), "");
                         break;
+                    }
+                    case 7: {
+                        newCourse.setCourseTime("", "", "", "", "", "", Integer.toString(row));
+                        break;
+                    }
 
                 }
                 courseInfoList.add(newCourse);
                 Log.d(TAG, "onClick: " + newCourse.getName() + "added");
-                studentCourse.setCourseList(courseInfoList);
+                coursesRepository.saveData(courseInfoList);
+
+                executor.diskIO().execute(()->{
+                    studentCourse.setCourseList(coursesRepository.loadDataFromDb());
+                });
+
                 courseTable.setStudentCourse(studentCourse);
                 courseTable.updateTable();
+
                 alertDialog.dismiss();
             }
         });

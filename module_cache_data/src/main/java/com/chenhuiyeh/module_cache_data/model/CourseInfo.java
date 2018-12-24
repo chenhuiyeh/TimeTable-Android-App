@@ -1,13 +1,34 @@
-package com.chenhuiyeh.timetable.activities.main.fragments.model;
+package com.chenhuiyeh.module_cache_data.model;
 
+import com.chenhuiyeh.module_cache_data.TimeTableTypeConverters;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import static com.chenhuiyeh.module_cache_data.model.CourseInfo.TABLE_NAME;
+
+
+@Entity(tableName = TABLE_NAME)
 public class CourseInfo {
+    static final String TABLE_NAME = "course_table";
+
     private String name = null;
+
+    @PrimaryKey
+    @NonNull
     private String courseCode = null;
+
+    @TypeConverters(TimeTableTypeConverters.class)
     private String[] times = null;
+
     private String professor = null;
     private String description = null;
     private String location = null;
 
+    @Ignore
     public CourseInfo(String name, String courseCode, String professor, String description, String location) {
         this.name = name;
         this.courseCode = courseCode;
@@ -16,8 +37,25 @@ public class CourseInfo {
         this.location = location;
     }
 
+    public CourseInfo(String name, String courseCode, String[] times, String professor, String description, String location) {
+        this.name = name;
+        this.courseCode = courseCode;
+        this.times = times;
+        this.professor = professor;
+        this.description = description;
+        this.location = location;
+    }
+
+
+    @Ignore
     public CourseInfo() {
     }
+
+    @Ignore
+    public CourseInfo(String name) {
+        this.name = name;
+    }
+
 
     public String getName() {
         return name;
@@ -31,7 +69,7 @@ public class CourseInfo {
         return times;
     }
 
-    public void setCourseTime(String[] courseTimes) {
+    public void setTimes(String[] courseTimes) {
         this.times = courseTimes;
     }
 
@@ -39,11 +77,12 @@ public class CourseInfo {
         this.times = new String[]{monday, tuesday, wednesday, thursday, friday, saturday, sunday};
     }
 
+    @NonNull
     public String getCourseCode() {
         return courseCode;
     }
 
-    public void setCourseCode(String courseCode) {
+    public void setCourseCode(@NonNull String courseCode) {
         this.courseCode = courseCode;
     }
 

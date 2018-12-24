@@ -2,7 +2,6 @@ package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.activities.main.fragments.model.CourseInfo;
+import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.timetable.ui.Utils.LetterImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

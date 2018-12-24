@@ -19,8 +19,6 @@
         </activity>
         <activity android:name=".activities.WeekActivity" />
         <activity android:name=".activities.DayDetail" />
-        <activity android:name=".activities.courses.CoursesActivity" />
-        <activity android:name=".activities.courses.AddCourseActivity"></activity>
     </application>
 
 </manifest>

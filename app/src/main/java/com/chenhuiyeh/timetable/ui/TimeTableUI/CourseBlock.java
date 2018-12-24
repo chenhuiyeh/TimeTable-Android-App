@@ -12,10 +12,6 @@ import com.chenhuiyeh.timetable.R;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
-/**
- * Created by blackmaple on 2017/5/9.
- */
-
 public class CourseBlock extends AppCompatTextView {
     private int row;
     private int col;
