@@ -1,15 +1,25 @@
 package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.chenhuiyeh.timetable.R;
+import com.chenhuiyeh.timetable.activities.main.fragments.model.CourseInfo;
+import com.chenhuiyeh.timetable.ui.Utils.LetterImageView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +40,10 @@ public class CourseListFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private RecyclerView courseListRecyclerView;
+    private FloatingActionButton fabCourses;
+    private List<CourseInfo> courses;
 
     public CourseListFragment() {
         // Required empty public constructor
@@ -67,9 +81,26 @@ public class CourseListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_course_list, container, false);
-        return inflater.inflate(R.layout.fragment_course_list, container, false);
+        fabCourses = rootView.findViewById(R.id.fabCourses);
+        fabCourses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddCourseDialog();
+            }
+        });
+        return rootView;
     }
 
+    private void showAddCourseDialog() {
+        AlertDialog.Builder addCourseDialogBuilder = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.add_course_dialog_title);
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
+        addCourseDialogBuilder.setView(dialogView);
+        AlertDialog alertDialog = addCourseDialogBuilder.create();
+        alertDialog.show();
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -107,5 +138,40 @@ public class CourseListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.ViewHolder> {
+
+        @NonNull
+        @Override
+        public CoursesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_course_list_single_item, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CoursesAdapter.ViewHolder holder, int position) {
+            holder.courseNameTextView.setText(courses.get(position).getName());
+            holder.courseNameImageView.setLetter(courses.get(position).getName().charAt(0));
+            holder.courseCodeTextView.setText(courses.get(position).getCourseCode());
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView courseNameTextView;
+            TextView courseCodeTextView;
+            LetterImageView courseNameImageView;
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                courseNameTextView = itemView.findViewById(R.id.course_name_textview);
+                courseCodeTextView = itemView.findViewById(R.id.course_code_textview);
+                courseNameImageView = itemView.findViewById(R.id.course_item_letter_imageview);
+            }
+
+
+        }
     }
 }

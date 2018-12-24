@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.view.Gravity;
+import android.view.View;
 
 import com.chenhuiyeh.timetable.R;
 
@@ -16,6 +17,9 @@ import androidx.core.content.ContextCompat;
  */
 
 public class CourseBlock extends AppCompatTextView {
+    private int row;
+    private int col;
+
     public CourseBlock(Context context) {
         super(context);
         setTextColor(ContextCompat.getColor(context, R.color.darken));
@@ -41,5 +45,21 @@ public class CourseBlock extends AppCompatTextView {
         setTag(null);
         super.setBackgroundColor(Color.TRANSPARENT);
         setOnClickListener(null);
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
     }
 }

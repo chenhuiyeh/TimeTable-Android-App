@@ -1,4 +1,4 @@
-package com.chenhuiyeh.timetable.ui.TimeTableUI.model;
+package com.chenhuiyeh.timetable.activities.main.fragments.model;
 
 import java.util.ArrayList;
 

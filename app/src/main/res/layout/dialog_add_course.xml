@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_course_name"
+        android:hint="Course Name"
+        android:inputType="text"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_course_course_code"
+        android:inputType="text"
+        android:layout_below="@+id/add_course_name"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Course Code"
+        android:layout_alignParentEnd="true"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_course_prof"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Professor"
+        android:layout_below="@+id/add_course_location"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_course_location"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Location"
+        android:layout_below="@+id/add_course_course_code"/>
+
+    <EditText
+        android:inputType="textMultiLine"
+        android:lines="6"
+        android:scrollbars="vertical"
+        android:gravity="top|left"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_course_description"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Description"
+        android:layout_below="@id/add_course_prof"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_course_description"
+        android:id="@+id/dialog_save_button"
+        android:text="Add"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18dp"
+        android:layout_margin="16dp"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_course_description"
+        android:id="@+id/dialog_cancel_button"
+        android:text="Cancel"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18dp"
+        android:layout_margin="16dp"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

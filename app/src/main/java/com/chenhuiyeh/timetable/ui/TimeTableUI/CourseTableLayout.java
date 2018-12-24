@@ -16,8 +16,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.ui.TimeTableUI.model.CourseInfo;
-import com.chenhuiyeh.timetable.ui.TimeTableUI.model.StudentCourse;
+import com.chenhuiyeh.timetable.activities.main.fragments.model.CourseInfo;
+import com.chenhuiyeh.timetable.activities.main.fragments.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +143,7 @@ public class CourseTableLayout extends LinearLayout {
                 tableCell.setLayoutParams(j == 0 ? title_col_params
                         : cell_params);
                 tableRow.addView(tableCell);
+
             }
             Log.e(getClass().getSimpleName(), "addRowView");
             courseContainer.addView(tableRow);
@@ -171,6 +172,9 @@ public class CourseTableLayout extends LinearLayout {
                 if (tableRow != null) {
                     CourseBlock tableCell = (CourseBlock) tableRow.getChildAt(j);
                     tableCell.resetBlock();
+                    tableCell.setOnClickListener(onClickListener);
+                    tableCell.setRow(i);
+                    tableCell.setCol(j);
                 }
             }
         }
@@ -231,6 +235,10 @@ public class CourseTableLayout extends LinearLayout {
             color_index++;
         }
         controlColRowShow();
+    }
+
+    public void updateTable() {
+        showCourse(studentCourse);
     }
 
     public void setStudentCourse(StudentCourse studentCourse) {
@@ -316,4 +324,5 @@ public class CourseTableLayout extends LinearLayout {
     public interface TableInitializeListener {
         void onTableInitialized(CourseTableLayout course_table);
     }
+
 }
