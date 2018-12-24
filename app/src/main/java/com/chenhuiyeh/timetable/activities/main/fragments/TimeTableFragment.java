@@ -199,6 +199,8 @@ public class TimeTableFragment extends Fragment {
                     studentCourse.setCourseList(coursesRepository.loadDataFromDb());
                 });
 
+                studentCourse.setCourseList(courseInfoList);
+
                 courseTable.setStudentCourse(studentCourse);
                 courseTable.updateTable();
 
