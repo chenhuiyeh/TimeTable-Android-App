@@ -1,6 +1,5 @@
 package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,15 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.chenhuiyeh.module_cache_data.AppExecutor;
+import com.chenhuiyeh.module_cache_data.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
+import com.chenhuiyeh.timetable.activities.main.MainActivity;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -41,8 +46,11 @@ public class CourseListFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private RecyclerView courseListRecyclerView;
-    private FloatingActionButton fabCourses;
-    private List<CourseInfo> courses;
+    private CoursesAdapter adapter;
+    private List<CourseInfo> currentCourses;
+
+    private CoursesViewModel mCoursesViewModel;
+    private AppExecutor executor;
 
     public CourseListFragment() {
         // Required empty public constructor
@@ -80,26 +88,31 @@ public class CourseListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_course_list, container, false);
-        fabCourses = rootView.findViewById(R.id.fabCourses);
-        fabCourses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddCourseDialog();
-            }
-        });
+        courseListRecyclerView = rootView.findViewById(R.id.course_list_recyclerview);
+
         return rootView;
     }
 
-    private void showAddCourseDialog() {
-        AlertDialog.Builder addCourseDialogBuilder = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.add_course_dialog_title);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
-        addCourseDialogBuilder.setView(dialogView);
-        AlertDialog alertDialog = addCourseDialogBuilder.create();
-        alertDialog.show();
+        if (getActivity() != null && getActivity() instanceof MainActivity)
+            ((MainActivity)getActivity()).setMainTitle(R.string.course_list_actionbar);
+        adapter = new CoursesAdapter();
+        courseListRecyclerView.setAdapter(adapter);
+        courseListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        executor = AppExecutor.getInstance();
+        mCoursesViewModel = ViewModelProviders.of(getActivity()).get(CoursesViewModel.class);
+        mCoursesViewModel.loadLiveDataFromDb().observe(this, new Observer<List<CourseInfo>>() {
+            @Override
+            public void onChanged(List<CourseInfo> courseInfos) {
+                adapter.setItems(courseInfos);
+            }
+        });
     }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -149,14 +162,21 @@ public class CourseListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull CoursesAdapter.ViewHolder holder, int position) {
-            holder.courseNameTextView.setText(courses.get(position).getName());
-            holder.courseNameImageView.setLetter(courses.get(position).getName().charAt(0));
-            holder.courseCodeTextView.setText(courses.get(position).getCourseCode());
+            holder.courseNameTextView.setText(currentCourses.get(position).getName());
+            holder.courseNameImageView.setLetter(currentCourses.get(position).getName().charAt(0));
+            holder.courseCodeTextView.setText(currentCourses.get(position).getCourseCode());
         }
 
         @Override
         public int getItemCount() {
+            if (currentCourses != null) return currentCourses.size();
+
             return 0;
+        }
+
+        void setItems(List<CourseInfo> courses) {
+            currentCourses = courses;
+            notifyDataSetChanged();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {

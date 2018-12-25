@@ -2,6 +2,7 @@ package com.chenhuiyeh.module_cache_data.repository;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.chenhuiyeh.module_cache_data.AppDatabase;
 import com.chenhuiyeh.module_cache_data.AppExecutor;
@@ -11,6 +12,7 @@ import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class CoursesRepository {
@@ -23,14 +25,20 @@ public class CoursesRepository {
     private AppExecutor executor;
     private Context context;
 
-    private MutableLiveData<ArrayList<CourseInfo>> cachedCourses;
+    private MutableLiveData<List<CourseInfo>> cachedCourses = new MutableLiveData<>();
 
     private CoursesRepository(Context context) {
         this.executor = AppExecutor.getInstance();
         this.context = context;
         this.mCoursesDao = AppDatabase.getInstance(context).courseDao();
 
-        cachedCourses = new MutableLiveData<>();
+        executor.diskIO().execute(()->{
+            List<CourseInfo> courseInfos= mCoursesDao.loadDataFromDB();
+            executor.mainThread().execute(()->{
+                cachedCourses.setValue(courseInfos);
+            });
+        });
+
     }
 
     public static CoursesRepository getInstance (Context context) {
@@ -41,6 +49,32 @@ public class CoursesRepository {
             }
         }
         return sInstance;
+    }
+
+    public MutableLiveData<List<CourseInfo>> loadLiveDataFromDb() {
+        final MutableLiveData<List<CourseInfo>> courses = new MutableLiveData<>();
+        executor.diskIO().execute(()->{
+            List<CourseInfo> courseInfo = mCoursesDao.loadDataFromDB();
+            executor.mainThread().execute(()->{
+                courses.setValue(courseInfo);
+            });
+
+        });
+
+        return courses;
+    }
+
+    public MutableLiveData<CourseInfo> loadLiveDataByIdFromDb(String _id) {
+        final MutableLiveData<CourseInfo> course = new MutableLiveData<>();
+        executor.diskIO().execute(()->{
+            CourseInfo courseInfo = mCoursesDao.loadDataByIdFromDb(_id);
+            executor.mainThread().execute(()->{
+                course.setValue(courseInfo);
+            });
+
+        });
+
+        return course;
     }
 
     public List<CourseInfo> loadDataFromDb() {
@@ -72,7 +106,7 @@ public class CoursesRepository {
     }
 
     public void deleteAll() {
-        cachedCourses.setValue(null);
+
         executor.diskIO().execute(()->{
             AppDatabase.getInstance(context).clearAllTables();
         });

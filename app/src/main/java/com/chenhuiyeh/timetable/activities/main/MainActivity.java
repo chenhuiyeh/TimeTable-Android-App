@@ -26,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity implements InboxFragment.OnFragmentInteractionListener,
     CourseListFragment.OnFragmentInteractionListener{
+
     private static final String TAG = "MainActivity";
 
     private InboxFragment inboxFragment;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
 
     private View actionBar;
     private TextView mTitleTextView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
