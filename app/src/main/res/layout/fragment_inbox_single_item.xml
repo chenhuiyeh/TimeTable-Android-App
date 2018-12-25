@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:layout_width="match_parent" android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:elevation="4dp">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.chenhuiyeh.timetable.ui.LetterImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/inbox_item_letter_imageview"
+            android:layout_margin="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/inbox_title_textview"
+            android:textStyle="bold"
+            android:text="Title"
+            android:layout_toEndOf="@+id/inbox_item_letter_imageview"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="10dp"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/inbox_descrip_textview"
+            android:layout_toEndOf="@+id/inbox_item_letter_imageview"
+            android:layout_below="@+id/inbox_title_textview"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp"
+            android:text="Description"/>
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
