@@ -3,13 +3,15 @@ package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.chenhuiyeh.module_cache_data.AppExecutor;
-import com.chenhuiyeh.module_cache_data.CoursesViewModel;
+import com.chenhuiyeh.module_cache_data.utils.AppExecutor;
+import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
@@ -22,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * create an instance of this fragment.
  */
 public class CourseListFragment extends Fragment {
+    private static final String TAG = "CourseListFragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -108,9 +112,37 @@ public class CourseListFragment extends Fragment {
         mCoursesViewModel.loadLiveDataFromDb().observe(this, new Observer<List<CourseInfo>>() {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
-                adapter.setItems(courseInfos);
+                Log.d(TAG, "onChanged: recyclerview update");
+                executor.diskIO().execute(()->{
+                    currentCourses = mCoursesViewModel.loadDataFromDb();
+                });
+                adapter.notifyDataSetChanged();
             }
         });
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        CourseInfo toDelete = adapter.getItemAtPosition(position);
+                        Toast.makeText(getActivity(), "Deleting " + toDelete.getName(), Toast.LENGTH_LONG).show();
+                        currentCourses.remove(position);
+                        courseListRecyclerView.removeViewAt(position);
+                        adapter.notifyItemRemoved(position);
+                        adapter.notifyItemRangeChanged(position, currentCourses.size());
+                        adapter.notifyDataSetChanged();
+                        mCoursesViewModel.deleteData(toDelete);
+                    }
+                }
+        );
+        touchHelper.attachToRecyclerView(courseListRecyclerView);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -174,10 +206,10 @@ public class CourseListFragment extends Fragment {
             return 0;
         }
 
-        void setItems(List<CourseInfo> courses) {
-            currentCourses = courses;
-            notifyDataSetChanged();
+        public CourseInfo getItemAtPosition (int position) {
+            return currentCourses.get(position);
         }
+
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView courseNameTextView;

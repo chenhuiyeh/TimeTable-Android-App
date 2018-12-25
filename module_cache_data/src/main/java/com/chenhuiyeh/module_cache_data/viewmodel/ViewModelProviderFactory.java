@@ -1,7 +1,6 @@
-package com.chenhuiyeh.module_cache_data;
+package com.chenhuiyeh.module_cache_data.viewmodel;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

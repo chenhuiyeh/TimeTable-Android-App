@@ -1,4 +1,4 @@
-package com.chenhuiyeh.module_cache_data;
+package com.chenhuiyeh.module_cache_data.viewmodel;
 
 import android.app.Application;
 
@@ -26,7 +26,7 @@ public class CoursesViewModel extends AndroidViewModel {
         return courses;
     }
 
-    public LiveData<CourseInfo> loadDataById(String code) {
+    public LiveData<CourseInfo> loadLiveDataById(String code) {
         return mCoursesRepository.loadLiveDataByIdFromDb(code);
     }
 
@@ -36,6 +36,10 @@ public class CoursesViewModel extends AndroidViewModel {
 
     public CourseInfo loadDataByIdFromDb(String _id) {
         return mCoursesRepository.loadDataByIdFromDb(_id);
+    }
+
+    public void updateCourseTime(String [] times, String code) {
+        mCoursesRepository.updateTime(times, code);
     }
 
     public void saveData(CourseInfo ... courseInfo) {

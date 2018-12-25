@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.chenhuiyeh.module_cache_data.AppExecutor;
-import com.chenhuiyeh.module_cache_data.CoursesViewModel;
+import com.chenhuiyeh.module_cache_data.utils.AppExecutor;
+import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
 import com.chenhuiyeh.timetable.ui.TimeTableUI.CourseBlock;
@@ -36,7 +36,6 @@ import androidx.lifecycle.ViewModelProviders;
  * create an instance of this fragment.
  */
 public class TimeTableFragment extends Fragment {
-    public static final boolean INITIALIZED = false;
 
     private static final String TAG = "TimeTableFragment";
     // TODO: Rename parameter arguments, choose names that match
@@ -52,10 +51,10 @@ public class TimeTableFragment extends Fragment {
     private Button addButton;
     private Button cancelButton;
 
-    private List<CourseInfo> courseInfoList= new ArrayList<>();
+    private List<CourseInfo> courseInfoList= new ArrayList<>(); // for course list frag
     private StudentCourse studentCourse = new StudentCourse();
 
-//    private CoursesRepository coursesRepository;
+    List<CourseInfo> courses = new ArrayList<>();
 
     private CoursesViewModel mCoursesViewModel;
     private AppExecutor executor;
@@ -107,6 +106,9 @@ public class TimeTableFragment extends Fragment {
             ((MainActivity)getActivity()).setMainTitle(R.string.app_name);
 
         executor = AppExecutor.getInstance();
+        executor.diskIO().execute(()->{
+            courses = mCoursesViewModel.loadDataFromDb();
+        });
         mCoursesViewModel.loadLiveDataFromDb().observe(this, new Observer<List<CourseInfo>>() {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
@@ -119,12 +121,14 @@ public class TimeTableFragment extends Fragment {
             }
         });
 
-
         // Set timetable
         executor.diskIO().execute(()->{
             studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
             courseTable.setStudentCourse(studentCourse);
-            courseTable.updateTable();
+            executor.mainThread().execute(()->{
+                courseTable.updateTable();
+            });
+
         });
 
 
@@ -174,61 +178,108 @@ public class TimeTableFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String name = courseName.getText().toString();
                 String code = courseCode.getText().toString();
                 String descriptionText = description.getText().toString();
                 String locationText = location.getText().toString();
                 String professorText = prof.getText().toString();
 
-                CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locationText);
+                boolean isInList = false;
+                for(CourseInfo c: courses) {
+                    if (c.getCourseCode().equalsIgnoreCase(code)){
+                        isInList = true;
+                        break;
+                    }
+                }
 
-                switch (col) {
-                    case 1: {
-                        newCourse.setTimes(new String[]{Integer.toString(row), "", "", "", "", "", ""});
-                        break;
+                if (!isInList) {
+                    CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locationText);
+
+                    switch (col) {
+                        case 1: {
+                            newCourse.setTimes(new String[]{Integer.toString(row), "", "", "", "", "", ""});
+                            break;
+                        }
+                        case 2: {
+                            newCourse.setTimes(new String[]{"", Integer.toString(row), "", "", "", "", ""});
+                            break;
+                        }
+                        case 3: {
+                            newCourse.setTimes(new String[]{"", "", Integer.toString(row), "", "", "", ""});
+                            break;
+                        }
+                        case 4: {
+                            newCourse.setTimes(new String[]{"", "", "", Integer.toString(row), "", "", ""});
+                            break;
+                        }
+                        case 5: {
+                            newCourse.setTimes(new String[]{"", "", "", "", Integer.toString(row), "", ""});
+                            break;
+                        }
+                        case 6: {
+                            newCourse.setTimes(new String[]{"", "", "", "", "", Integer.toString(row), ""});
+                            break;
+                        }
+                        case 7: {
+                            newCourse.setTimes(new String[]{"", "", "", "", "", "", Integer.toString(row)});
+                            break;
+                        }
+
                     }
-                    case 2: {
-                        newCourse.setTimes(new String[]{"", Integer.toString(row), "", "", "", "", ""});
-                        break;
-                    }
-                    case 3: {
-                        newCourse.setTimes(new String[]{"", "", Integer.toString(row), "", "", "", ""});
-                        break;
-                    }
-                    case 4: {
-                        newCourse.setTimes(new String[]{"", "", "", Integer.toString(row), "", "", ""});
-                        break;
-                    }
-                    case 5: {
-                        newCourse.setTimes(new String[]{"", "", "", "", Integer.toString(row), "", ""});
-                        break;
-                    }
-                    case 6: {
-                        newCourse.setTimes(new String[]{"", "", "", "", "", Integer.toString(row), ""});
-                        break;
-                    }
-                    case 7: {
-                        newCourse.setTimes(new String[]{"", "", "", "", "", "", Integer.toString(row)});
-                        break;
-                    }
+                    courseInfoList.add(newCourse); // for course list frag
+                    Log.d(TAG, "onClick: " + newCourse.getName() + "added");
+
+                    mCoursesViewModel.saveData(newCourse);
+                } else {
+                    executor.diskIO().execute(()->{
+                        CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
+                        String[] times = addedCourse.getTimes();
+                        executor.mainThread().execute(()->{
+                            switch (col) {
+                                case 1: {
+                                    times[0] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 2: {
+                                    times[1] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 3: {
+                                    times[2] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 4: {
+                                    times[3] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 5: {
+                                    times[4] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 6: {
+                                    times[5] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                                case 7: {
+                                    times[6] = Integer.toString(row);
+                                    addedCourse.setTimes(times);
+                                    break;
+                                }
+                            }
+                            mCoursesViewModel.saveData(addedCourse);
+                        });
+
+                    });
 
                 }
-                courseInfoList.add(newCourse);
-                Log.d(TAG, "onClick: " + newCourse.getName() + "added");
-                mCoursesViewModel.saveData(newCourse);
-                executor.diskIO().execute(()->{
-                    for (int i = 0; i <mCoursesViewModel.loadLiveDataFromDb().getValue().size() ; i++) {
-                        Log.d(TAG, "added course" + mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getCourseCode() + "\n"
-                        + mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[0] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[1] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[2] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[3] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[4] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[5] +
-                                mCoursesViewModel.loadLiveDataFromDb().getValue().get(i).getTimes()[6]);
-                    }
 
+                executor.diskIO().execute(()->{
                     studentCourse.setCourseList(mCoursesViewModel.loadLiveDataFromDb().getValue());
                 });
 

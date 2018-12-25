@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.chenhuiyeh.module_cache_data.dao.CoursesDao;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
+import com.chenhuiyeh.module_cache_data.utils.TimeTableTypeConverters;
 
 import androidx.room.Database;
 import androidx.room.Room;

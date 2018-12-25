@@ -1,6 +1,6 @@
 package com.chenhuiyeh.module_cache_data.model;
 
-import com.chenhuiyeh.module_cache_data.TimeTableTypeConverters;
+import com.chenhuiyeh.module_cache_data.utils.TimeTableTypeConverters;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

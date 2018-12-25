@@ -1,4 +1,4 @@
-package com.chenhuiyeh.module_cache_data;
+package com.chenhuiyeh.module_cache_data.utils;
 
 
 import androidx.room.TypeConverter;

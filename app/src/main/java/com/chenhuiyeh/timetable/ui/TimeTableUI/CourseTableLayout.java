@@ -216,7 +216,7 @@ public class CourseTableLayout extends LinearLayout {
                 if(time!=null) {
                     ArrayList<String> s = splitTime(time);
                     for (String t : s) {
-                        if (t.length() != 0) {
+                        if (t != null && t.length()!= 0 && !t.equalsIgnoreCase("null")) {
                             Log.d(TAG, "showCourse: t: " + t);
                             int row = Integer.parseInt(t);
                             int col = i + 1;
@@ -267,52 +267,52 @@ public class CourseTableLayout extends LinearLayout {
         LinearLayout tableRow = (LinearLayout) courseContainer.getChildAt(row);
         if (tableRow != null) {
             CourseBlock table_cell = (CourseBlock) tableRow.getChildAt(col);
-            table_cell.setVisibility(View.INVISIBLE);
+//            table_cell.setVisibility(View.INVISIBLE);
             table_cell.setText(course.getName().trim());
             table_cell.setTag(course);
             table_cell.setBackgroundColor(color);
             table_cell.setOnClickListener(onClickListener);
-            setAnimation(table_cell);
+//            setAnimation(table_cell);
         }
     }
 
-    private void setAnimation(final CourseBlock textview) {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) getContext()
-                .getSystemService(Context.WINDOW_SERVICE);
-        if (windowManager != null) {
-            windowManager.getDefaultDisplay().getMetrics(displaymetrics);
-        }
-        final TranslateAnimation translateAnimation = new TranslateAnimation(
-                displaymetrics.widthPixels, 0, 0, 0);
-        translateAnimation.setDuration(500);
-        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                textview.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                // nothing to do
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // nothing to do
-            }
-
-        });
-        translateAnimation.setInterpolator(new OvershootInterpolator());
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                textview.startAnimation(translateAnimation);
-            }
-        }, (long) ((Math.random() * 500) + 500));
-    }
+//    private void setAnimation(final CourseBlock textview) {
+//        DisplayMetrics displaymetrics = new DisplayMetrics();
+//        WindowManager windowManager = (WindowManager) getContext()
+//                .getSystemService(Context.WINDOW_SERVICE);
+//        if (windowManager != null) {
+//            windowManager.getDefaultDisplay().getMetrics(displaymetrics);
+//        }
+//        final TranslateAnimation translateAnimation = new TranslateAnimation(
+//                displaymetrics.widthPixels, 0, 0, 0);
+//        translateAnimation.setDuration(500);
+//        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+//
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                textview.setVisibility(View.VISIBLE);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                // nothing to do
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//                // nothing to do
+//            }
+//
+//        });
+//        translateAnimation.setInterpolator(new OvershootInterpolator());
+//        new Handler().postDelayed(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                textview.startAnimation(translateAnimation);
+//            }
+//        }, (long) ((Math.random() * 500) + 500));
+//    }
 
     @Override
     public void setOnTouchListener(OnTouchListener onTouchListener) {

@@ -2,17 +2,14 @@ package com.chenhuiyeh.module_cache_data.repository;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.ListView;
 
 import com.chenhuiyeh.module_cache_data.AppDatabase;
-import com.chenhuiyeh.module_cache_data.AppExecutor;
+import com.chenhuiyeh.module_cache_data.utils.AppExecutor;
 import com.chenhuiyeh.module_cache_data.dao.CoursesDao;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class CoursesRepository {
@@ -99,6 +96,12 @@ public class CoursesRepository {
         });
     }
 
+    public void updateTime(String[] times, String code) {
+        executor.diskIO().execute(()->{
+            mCoursesDao.updateCourseTime(code, times);
+        });
+    }
+
     public void deleteData(CourseInfo ... courses) {
         executor.diskIO().execute(()->{
             mCoursesDao.deleteData(courses);
@@ -119,6 +122,7 @@ public class CoursesRepository {
         });
         return false;
     }
+
 
 
 }

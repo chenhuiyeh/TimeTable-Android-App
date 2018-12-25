@@ -1,17 +1,16 @@
 package com.chenhuiyeh.module_cache_data.dao;
 
-import com.chenhuiyeh.module_cache_data.TimeTableTypeConverters;
+import com.chenhuiyeh.module_cache_data.utils.TimeTableTypeConverters;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 import androidx.room.Update;
 
@@ -40,5 +39,8 @@ public interface CoursesDao {
     @Query("SELECT COUNT(*) FROM course_table")
     int getNumEntries();
 
+    @Query("UPDATE course_table SET times = :times WHERE courseCode = :code")
+    @TypeConverters(TimeTableTypeConverters.class)
+    void updateCourseTime(String code, String[] times);
 
 }
