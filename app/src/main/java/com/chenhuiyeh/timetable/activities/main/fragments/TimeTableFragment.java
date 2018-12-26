@@ -49,8 +49,7 @@ public class TimeTableFragment extends Fragment {
     private String mParam2;
 
     private CourseTableLayout courseTable;
-    private Button addButton;
-    private Button cancelButton;
+
 
     private List<CourseInfo> courseInfoList= new ArrayList<>(); // for course list frag
     private StudentCourse studentCourse = new StudentCourse();
@@ -123,17 +122,6 @@ public class TimeTableFragment extends Fragment {
             }
         });
 
-//        mCoursesViewModel.loadLiveDataFromDb().observeForever(new Observer<List<CourseInfo>>() {
-//            @Override
-//            public void onChanged(List<CourseInfo> courseInfos) {
-//                Log.d(TAG, "onChanged: changed data!!");
-//                studentCourse.setCourseList(courseInfos);
-//                executor.mainThread().execute(()->{
-//                    courseTable.setStudentCourse(studentCourse);
-//                    courseTable.updateTable();
-//                });
-//            }
-//        });
 
         // Set timetable
         executor.diskIO().execute(()->{
@@ -157,11 +145,11 @@ public class TimeTableFragment extends Fragment {
             public void onClick(View view) {
                 CourseInfo item = (CourseInfo) view.getTag();
                 CourseBlock block = (CourseBlock) view;
+                int row = block.getRow();
+                int col = block.getCol();
                 if (item != null)
-                    showInfoDialog(view.getId(), item.getCourseCode(), item);
+                    showInfoDialog(item, row, col);
                 else {
-                    int row = block.getRow();
-                    int col = block.getCol();
                     showAddCourseDialog(row, col);
                 }
             }
@@ -175,6 +163,8 @@ public class TimeTableFragment extends Fragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
+        Button addButton;
+        Button cancelButton;
         addButton = dialogView.findViewById(R.id.dialog_save_button);
         cancelButton = dialogView.findViewById(R.id.dialog_cancel_button);
 
@@ -207,38 +197,68 @@ public class TimeTableFragment extends Fragment {
                 }
 
                 if (!isInList) {
-                    CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locationText);
+                    String[][] locations = new String[][]{
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""},
+                            {"","","","","","",""}
+                    };
+                    CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locations);
 
                     switch (col) {
                         case 1: {
                             newCourse.setTimes(new String[]{Integer.toString(row), "", "", "", "", "", ""});
+                            locations[row-1][0] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 2: {
                             newCourse.setTimes(new String[]{"", Integer.toString(row), "", "", "", "", ""});
+                            locations[row-1][1] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 3: {
                             newCourse.setTimes(new String[]{"", "", Integer.toString(row), "", "", "", ""});
+                            locations[row-1][2] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 4: {
                             newCourse.setTimes(new String[]{"", "", "", Integer.toString(row), "", "", ""});
+                            locations[row-1][3] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 5: {
                             newCourse.setTimes(new String[]{"", "", "", "", Integer.toString(row), "", ""});
+                            locations[row-1][4] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 6: {
                             newCourse.setTimes(new String[]{"", "", "", "", "", Integer.toString(row), ""});
+                            locations[row-1][5] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
                         case 7: {
                             newCourse.setTimes(new String[]{"", "", "", "", "", "", Integer.toString(row)});
+                            locations[row-1][6] = locationText;
+                            newCourse.setLocations(locations);
                             break;
                         }
 
+                    }
+                    for (int i = 0; i < locations.length; i++) {
+                        for (int j = 0; j < locations[i].length; j++) {
+                            Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
+                        }
                     }
                     courseInfoList.add(newCourse); // for course list frag
                     Log.d(TAG, "onClick: " + newCourse.getName() + "added");
@@ -253,97 +273,36 @@ public class TimeTableFragment extends Fragment {
                 } else {
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
-
+                        String[][] locations = addedCourse.getLocations();
                         String[] times = addedCourse.getTimes();
-                            switch (col) {
-                                case 1: {
-                                    if (times[0] == null || times[0].isEmpty())
-                                        times[0] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[0];
-                                        times[0] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 2: {
-                                    if (times[1] == null || times[1].isEmpty())
-                                        times[1] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[1];
-                                        times[1] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 3: {
-                                    if (times[2] == null || times[2].isEmpty())
-                                        times[2] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[2];
-                                        times[2] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 4: {
-                                    if (times[3] == null || times[3].isEmpty())
-                                        times[3] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[3];
-                                        times[3] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 5: {
-                                    if (times[4] == null || times[4].isEmpty())
-                                        times[4] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[4];
-                                        times[4] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 6: {
-                                    if (times[5] == null || times[5].isEmpty())
-                                        times[5] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[5];
-                                        times[5] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                                case 7: {
-                                    if (times[6] == null || times[6].isEmpty())
-                                        times[6] = Integer.toString(row);
-                                    else {
-                                        String currTime = times[6];
-                                        times[6] = Integer.toString(row) + ' ' + currTime;
-                                    }
-                                    addedCourse.setTimes(times);
-                                    break;
-                                }
-                            }
-                            for (int i = 0; i < times.length; i++) {
-                                Log.d(TAG,i + " " + times[i]);
-                            }
-                            mCoursesViewModel.saveData(addedCourse);
-                            studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
 
-                            updateCourseTable();
+                        if (times[col-1] == null || times[col-1].isEmpty())
+                            times[col-1] = Integer.toString(row);
+                        else {
+                            String currTime = times[col-1];
+                            times[col-1] = Integer.toString(row) + ' ' + currTime;
+                        }
+                        addedCourse.setTimes(times);
+
+                        locations[row-1][col-1] = locationText;
+                        addedCourse.setLocations(locations);
+                        for (int i = 0; i < locations.length; i++) {
+                            for (int j = 0; j < locations[i].length; j++) {
+                                Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
+                            }
+                        }
+
+                        for (int i = 0; i < times.length; i++) {
+                            Log.d(TAG,i + " " + times[i]);
+                        }
+                        mCoursesViewModel.saveData(addedCourse);
+                        studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+
+                        updateCourseTable();
                     });
 
                 }
-//                executor.diskIO().execute(()->{
-//                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
-//                });
 
-//                updateCourseTable();
-//                courseTable.setStudentCourse(studentCourse);
-//                courseTable.updateTable();
                 alertDialog.dismiss();
             }
         });
@@ -368,14 +327,98 @@ public class TimeTableFragment extends Fragment {
         });
     }
 
-    private void showInfoDialog(int id, String courseCode, CourseInfo course) {
-        String message = String.format(
-                "Course Name："+ course.getName() + "\n" + "Professor: " + course.getProfessor());
+    private void showInfoDialog(CourseInfo course, final int row, final int col) {
+
         AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(getActivity())
-                .setTitle(courseCode)
-                .setMessage(message)
-                .setPositiveButton("Done", null);
-        courseDialogBuilder.show();
+                .setTitle(course.getCourseCode());
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
+        Button addButton;
+        Button cancelButton;
+        addButton = dialogView.findViewById(R.id.dialog_save_button);
+        cancelButton = dialogView.findViewById(R.id.dialog_cancel_button);
+        addButton.setText("Save");
+
+        final EditText courseNameEditText = dialogView.findViewById(R.id.add_course_name);
+        final EditText courseCodeEditText = dialogView.findViewById(R.id.add_course_course_code);
+        final EditText profEditText = dialogView.findViewById(R.id.add_course_prof);
+        final EditText locationEditText = dialogView.findViewById(R.id.add_course_location);
+        final EditText descriptionEditText = dialogView.findViewById(R.id.add_course_description);
+
+        courseNameEditText.setClickable(true);
+        courseNameEditText.setFocusable(true);
+        if (course.getName()!= null)
+            courseNameEditText.setText(course.getName());
+
+        courseCodeEditText.setClickable(true);
+        courseCodeEditText.setFocusable(true);
+        if (course.getCourseCode()!= null)
+            courseCodeEditText.setText(course.getCourseCode());
+
+        profEditText.setClickable(true);
+        profEditText.setFocusable(true);
+        if (course.getProfessor()!= null)
+            profEditText.setText(course.getProfessor());
+
+        locationEditText.setClickable(true);
+        locationEditText.setFocusable(true);
+        if (course.getLocations()!= null && course.getLocations()[row-1].length != 0)
+            locationEditText.setText(course.getLocations()[row-1][col-1]);
+
+        descriptionEditText.setClickable(true);
+        descriptionEditText.setFocusable(true);
+        if(course.getDescription()!= null)
+            descriptionEditText.setText(course.getDescription());
+
+        courseDialogBuilder.setView(dialogView);
+
+        final AlertDialog alertDialog = courseDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executor.diskIO().execute(()-> {
+                    CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(course.getCourseCode());
+                    String[] times = course.getTimes();
+                    String[][] locations = course.getLocations();
+
+                    String name = courseNameEditText.getText().toString();
+                    String code = courseCodeEditText.getText().toString();
+                    String professor = profEditText.getText().toString();
+                    String descrip = descriptionEditText.getText().toString();
+                    String thisLocation = locationEditText.getText().toString();
+
+                    addedCourse.setName(name);
+                    addedCourse.setCourseCode(code);
+                    addedCourse.setProfessor(professor);
+                    addedCourse.setDescription(descrip);
+
+                    for (int i = 0; i < locations.length; i++) {
+                        for (int j = 0; j < locations[i].length; j++) {
+                            Log.d(TAG, "onClick: location:" + i + " " + j + " " + locations[i][j]);
+                        }
+                    }
+                    locations[row-1][col-1] = thisLocation;
+                    addedCourse.setLocations(locations);
+
+                    mCoursesViewModel.saveData(addedCourse);
+                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+
+                    updateCourseTable();
+                });
+                alertDialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

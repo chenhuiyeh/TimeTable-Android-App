@@ -91,4 +91,12 @@ dependencies {
 
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+    implementation files('libs/commons-beanutils-1.9.3-javadoc.jar')
+    implementation files('libs/commons-beanutils-1.9.3-sources.jar')
+    implementation files('libs/commons-beanutils-1.9.3-test-sources.jar')
+    implementation files('libs/commons-beanutils-1.9.3-tests.jar')
+    implementation files('libs/commons-beanutils-1.9.3.jar')
+    implementation files('libs/commons-collections4-4.2-javadoc.jar')
+    implementation files('libs/commons-collections4-4.2.jar')
+    implementation "commons-logging:commons-logging:1.2"
 }

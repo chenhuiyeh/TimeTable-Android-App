@@ -28,24 +28,26 @@ public class CourseInfo {
 
     private String professor;
     private String description;
-    private String location;
+
+    @TypeConverters(TimeTableTypeConverters.class)
+    private String[][] locations;
 
     @Ignore
-    public CourseInfo(String name, String courseCode, String professor, String description, String location) {
+    public CourseInfo(String name, String courseCode, String professor, String description, String[][] locations) {
         this.name = name;
         this.courseCode = courseCode;
         this.professor = professor;
         this.description = description;
-        this.location = location;
+        this.locations = locations;
     }
 
-    public CourseInfo(String name, String courseCode, String[] times, String professor, String description, String location) {
+    public CourseInfo(String name, String courseCode, String[] times, String professor, String description, String[][] locations) {
         this.name = name;
         this.courseCode = courseCode;
         this.times = times;
         this.professor = professor;
         this.description = description;
-        this.location = location;
+        this.locations = locations;
     }
 
 
@@ -104,11 +106,11 @@ public class CourseInfo {
         this.description = description;
     }
 
-    public String getLocation() {
-        return location;
+    public String[][] getLocations() {
+        return locations;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocations(String[][] locations) {
+        this.locations = locations;
     }
 }

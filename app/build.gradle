@@ -16,6 +16,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions{
+        exclude 'index-all.html'
+        exclude 'index.html'
+        exclude 'stylesheet.css'
+        exclude 'allclasses-frame.html'
+        exclude 'package-list'
+        exclude 'help-doc.html'
+        exclude 'constant-values.html'
+        exclude 'overview-tree.html'
+        exclude 'serialized-form.html'
+        exclude 'deprecated-list.html'
+        exclude 'allclasses-noframe.html'
+        exclude 'overview-summary.html'
+        exclude 'script.js'
+        exclude 'overview-frame.html'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
