@@ -115,8 +115,10 @@ public class InboxFragment extends Fragment {
 
         executor = AppExecutor.getInstance();
 
-        mInboxItemViewModel = ViewModelProviders.of(getActivity()).get(InboxItemViewModel.class);
-        mInboxItemViewModel.loadLiveDataFromDb().observe(this, new Observer<List<InboxItem>>() {
+        mInboxItemViewModel = ViewModelProviders.of(this).get(InboxItemViewModel.class);
+
+
+        mInboxItemViewModel.loadLiveDataFromDb().observeForever( new Observer<List<InboxItem>>() {
             @Override
             public void onChanged(List<InboxItem> inboxItems) {
                 Log.d(TAG, "onChanged: item added");
@@ -181,6 +183,10 @@ public class InboxFragment extends Fragment {
                 String description = descripEditText.getText().toString();
 
                 InboxItem newInboxItem = new InboxItem(title, description);
+                mInboxItemList.add(newInboxItem);
+                adapter.notifyItemInserted(mInboxItemList.indexOf(newInboxItem));
+                adapter.notifyItemRangeChanged(mInboxItemList.indexOf(newInboxItem), mInboxItemList.size());
+                adapter.notifyDataSetChanged();
                 executor.diskIO().execute(()->{
                     mInboxItemViewModel.saveData(newInboxItem);
                     Log.d(TAG, "onClick: saved item: " + newInboxItem.getTitle());

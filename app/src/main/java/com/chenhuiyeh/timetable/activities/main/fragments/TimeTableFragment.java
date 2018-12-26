@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -55,6 +56,7 @@ public class TimeTableFragment extends Fragment {
     private StudentCourse studentCourse = new StudentCourse();
 
     List<CourseInfo> courses = new ArrayList<>();
+    public MediatorLiveData<List<CourseInfo>> currCourse = new MediatorLiveData<>();
 
     private CoursesViewModel mCoursesViewModel;
     private AppExecutor executor;
@@ -93,7 +95,7 @@ public class TimeTableFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_time_table, container, false);
         courseTable = rootView.findViewById(R.id.courseTable);
-        mCoursesViewModel = ViewModelProviders.of(getActivity()).get(CoursesViewModel.class);
+        mCoursesViewModel = ViewModelProviders.of(this).get(CoursesViewModel.class);
 
         return rootView;
     }
@@ -109,21 +111,31 @@ public class TimeTableFragment extends Fragment {
         executor.diskIO().execute(()->{
             courses = mCoursesViewModel.loadDataFromDb();
         });
-        mCoursesViewModel.loadLiveDataFromDb().observe(this, new Observer<List<CourseInfo>>() {
+
+        currCourse.addSource(mCoursesViewModel.loadLiveDataFromDb(), new Observer<List<CourseInfo>>() {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
                 Log.d(TAG, "onChanged: changed data!!");
                 studentCourse.setCourseList(courseInfos);
-                executor.mainThread().execute(()->{
-                    courseTable.setStudentCourse(studentCourse);
-                    courseTable.updateTable();
-                });
+                courseTable.setStudentCourse(studentCourse);
+                courseTable.updateTable();
             }
         });
+//        mCoursesViewModel.loadLiveDataFromDb().observeForever(new Observer<List<CourseInfo>>() {
+//            @Override
+//            public void onChanged(List<CourseInfo> courseInfos) {
+//                Log.d(TAG, "onChanged: changed data!!");
+//                studentCourse.setCourseList(courseInfos);
+//                executor.mainThread().execute(()->{
+//                    courseTable.setStudentCourse(studentCourse);
+//                    courseTable.updateTable();
+//                });
+//            }
+//        });
 
         // Set timetable
         executor.diskIO().execute(()->{
-            studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+            studentCourse.setCourseList(courses);
             courseTable.setStudentCourse(studentCourse);
             executor.mainThread().execute(()->{
                 courseTable.updateTable();
@@ -144,7 +156,7 @@ public class TimeTableFragment extends Fragment {
                 CourseInfo item = (CourseInfo) view.getTag();
                 CourseBlock block = (CourseBlock) view;
                 if (item != null)
-                    showInfoDialog(view.getId(), item.getName(), item);
+                    showInfoDialog(view.getId(), item.getCourseCode(), item);
                 else {
                     int row = block.getRow();
                     int col = block.getCol();
@@ -234,57 +246,93 @@ public class TimeTableFragment extends Fragment {
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
                         String[] times = addedCourse.getTimes();
-                        executor.mainThread().execute(()->{
                             switch (col) {
                                 case 1: {
-                                    times[0] = Integer.toString(row);
+                                    if (times[0] == null || times[0].isEmpty())
+                                        times[0] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[0];
+                                        times[0] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 2: {
-                                    times[1] = Integer.toString(row);
+                                    if (times[1] == null || times[1].isEmpty())
+                                        times[1] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[1];
+                                        times[1] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 3: {
-                                    times[2] = Integer.toString(row);
+                                    if (times[2] == null || times[2].isEmpty())
+                                        times[2] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[2];
+                                        times[2] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 4: {
-                                    times[3] = Integer.toString(row);
+                                    if (times[3] == null || times[3].isEmpty())
+                                        times[3] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[3];
+                                        times[3] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 5: {
-                                    times[4] = Integer.toString(row);
+                                    if (times[4] == null || times[4].isEmpty())
+                                        times[4] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[4];
+                                        times[4] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 6: {
-                                    times[5] = Integer.toString(row);
+                                    if (times[5] == null || times[5].isEmpty())
+                                        times[5] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[5];
+                                        times[5] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                                 case 7: {
-                                    times[6] = Integer.toString(row);
+                                    if (times[6] == null || times[6].isEmpty())
+                                        times[6] = Integer.toString(row);
+                                    else {
+                                        String currTime = times[6];
+                                        times[6] = currTime + ' ' + Integer.toString(row);
+                                    }
                                     addedCourse.setTimes(times);
                                     break;
                                 }
                             }
+                            for (int i = 0; i < times.length; i++) {
+                                Log.d(TAG,i + " " + times[i]);
+                            }
                             mCoursesViewModel.saveData(addedCourse);
-                        });
-
+                            studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
                     });
 
                 }
-
                 executor.diskIO().execute(()->{
-                    studentCourse.setCourseList(mCoursesViewModel.loadLiveDataFromDb().getValue());
+                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
                 });
 
                 updateCourseTable();
-
+//                courseTable.setStudentCourse(studentCourse);
+//                courseTable.updateTable();
                 alertDialog.dismiss();
             }
         });
@@ -309,13 +357,13 @@ public class TimeTableFragment extends Fragment {
         });
     }
 
-    private void showInfoDialog(int id, String courseName, CourseInfo course) {
+    private void showInfoDialog(int id, String courseCode, CourseInfo course) {
         String message = String.format(
-                "Course Name：", course.getName());
+                "Course Name："+ course.getName() + "\n" + "Professor: " + course.getProfessor());
         AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(getActivity())
-                .setTitle(courseName)
+                .setTitle(courseCode)
                 .setMessage(message)
-                .setPositiveButton("Detail", null);
+                .setPositiveButton("Done", null);
         courseDialogBuilder.show();
     }
 
@@ -334,4 +382,9 @@ public class TimeTableFragment extends Fragment {
         super.onDetach();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mCoursesViewModel.loadLiveDataFromDb().removeObservers(this);
+    }
 }

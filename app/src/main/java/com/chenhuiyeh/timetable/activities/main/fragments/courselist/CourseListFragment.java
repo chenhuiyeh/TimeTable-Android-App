@@ -15,6 +15,7 @@ import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
+import com.chenhuiyeh.timetable.activities.main.fragments.TimeTableFragment;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
 
 import java.util.List;
@@ -108,7 +109,8 @@ public class CourseListFragment extends Fragment {
         courseListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         executor = AppExecutor.getInstance();
-        mCoursesViewModel = ViewModelProviders.of(getActivity()).get(CoursesViewModel.class);
+        mCoursesViewModel = ViewModelProviders.of(this).get(CoursesViewModel.class);
+
         mCoursesViewModel.loadLiveDataFromDb().observe(this, new Observer<List<CourseInfo>>() {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
@@ -116,6 +118,7 @@ public class CourseListFragment extends Fragment {
                 executor.diskIO().execute(()->{
                     currentCourses = mCoursesViewModel.loadDataFromDb();
                 });
+                currentCourses = courseInfos;
                 adapter.notifyDataSetChanged();
             }
         });
@@ -167,6 +170,12 @@ public class CourseListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mCoursesViewModel.loadLiveDataFromDb().removeObservers(this);
     }
 
     /**

@@ -8,16 +8,16 @@ public class TimeTableTypeConverters {
     @TypeConverter
     public String fromArray(String[] strings) {
         String string = "";
-        for(int i = 0; i<strings.length; i ++) string += (strings[i] + " ");
+        for(int i = 0; i<strings.length; i ++) string += (strings[i] + ",");
 
         return string;
     }
 
     @TypeConverter
     public String[] toArray(String concatenatedStrings) {
-        String[] myStrings = new String[7];
+        String[] myStrings = new String[14];
         int i = 0;
-        for(String s : concatenatedStrings.split(" ")) {
+        for(String s : concatenatedStrings.split(",")) {
             myStrings[i] = s;
             i++;
         }
