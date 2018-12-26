@@ -1,7 +1,5 @@
 package com.chenhuiyeh.module_cache_data.utils;
 
-import org.apache.commons.beanutils.converters.ArrayConverter;
-import org.apache.commons.beanutils.converters.StringConverter;
 import android.util.Log;
 
 import androidx.room.TypeConverter;
@@ -42,7 +40,8 @@ public class TimeTableTypeConverters {
                 if(j!=strings[i].length-1)
                     s+=",";
             }
-            s+=";";
+            if(i!=strings.length-1)
+                s+=";";
         }
 
         return s;
@@ -55,11 +54,15 @@ public class TimeTableTypeConverters {
         int i = 0;
         for(String s : strings.split(";")) {
             int j = 0;
-            for(String inner:s.split(",")) {
+            for(String inner:s.split(",") ) {
                 result[i][j] = inner;
+                Log.d(TAG, "toDoubleArray: " + i + " " + j);
                 j++;
             }
-            i++;
+            if(i < 6)
+                i++;
+            else
+                break;
         }
         return result;
     }
