@@ -212,7 +212,7 @@ public class CourseTableLayout extends LinearLayout {
             boolean isHaveTime = false;
             for (int i = 0; i < 7; i++) {
                 String time = item.getTimes()[i];
-                Log.d(TAG, "showCourse: time: " + time);
+                Log.d(TAG, "showCourse: time: " +item.getName() + time);
                 if(time!=null) {
                     ArrayList<String> s = splitTime(time);
                     for (String t : s) {
@@ -268,7 +268,7 @@ public class CourseTableLayout extends LinearLayout {
         if (tableRow != null) {
             CourseBlock table_cell = (CourseBlock) tableRow.getChildAt(col);
 //            table_cell.setVisibility(View.INVISIBLE);
-            table_cell.setText(course.getName().trim());
+            table_cell.setText(course.getCourseCode().trim());
             table_cell.setTag(course);
             table_cell.setBackgroundColor(color);
             table_cell.setOnClickListener(onClickListener);

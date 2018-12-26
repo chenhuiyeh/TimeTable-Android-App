@@ -116,11 +116,13 @@ public class TimeTableFragment extends Fragment {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
                 Log.d(TAG, "onChanged: changed data!!");
+                courses = courseInfos;
                 studentCourse.setCourseList(courseInfos);
                 courseTable.setStudentCourse(studentCourse);
                 courseTable.updateTable();
             }
         });
+
 //        mCoursesViewModel.loadLiveDataFromDb().observeForever(new Observer<List<CourseInfo>>() {
 //            @Override
 //            public void onChanged(List<CourseInfo> courseInfos) {
@@ -242,9 +244,16 @@ public class TimeTableFragment extends Fragment {
                     Log.d(TAG, "onClick: " + newCourse.getName() + "added");
 
                     mCoursesViewModel.saveData(newCourse);
+
+                    executor.diskIO().execute(()->{
+                        studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+                    });
+
+                    updateCourseTable();
                 } else {
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
+
                         String[] times = addedCourse.getTimes();
                             switch (col) {
                                 case 1: {
@@ -252,7 +261,7 @@ public class TimeTableFragment extends Fragment {
                                         times[0] = Integer.toString(row);
                                     else {
                                         String currTime = times[0];
-                                        times[0] = currTime + ' ' + Integer.toString(row);
+                                        times[0] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -262,7 +271,7 @@ public class TimeTableFragment extends Fragment {
                                         times[1] = Integer.toString(row);
                                     else {
                                         String currTime = times[1];
-                                        times[1] = currTime + ' ' + Integer.toString(row);
+                                        times[1] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -272,7 +281,7 @@ public class TimeTableFragment extends Fragment {
                                         times[2] = Integer.toString(row);
                                     else {
                                         String currTime = times[2];
-                                        times[2] = currTime + ' ' + Integer.toString(row);
+                                        times[2] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -282,7 +291,7 @@ public class TimeTableFragment extends Fragment {
                                         times[3] = Integer.toString(row);
                                     else {
                                         String currTime = times[3];
-                                        times[3] = currTime + ' ' + Integer.toString(row);
+                                        times[3] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -292,7 +301,7 @@ public class TimeTableFragment extends Fragment {
                                         times[4] = Integer.toString(row);
                                     else {
                                         String currTime = times[4];
-                                        times[4] = currTime + ' ' + Integer.toString(row);
+                                        times[4] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -302,7 +311,7 @@ public class TimeTableFragment extends Fragment {
                                         times[5] = Integer.toString(row);
                                     else {
                                         String currTime = times[5];
-                                        times[5] = currTime + ' ' + Integer.toString(row);
+                                        times[5] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -312,7 +321,7 @@ public class TimeTableFragment extends Fragment {
                                         times[6] = Integer.toString(row);
                                     else {
                                         String currTime = times[6];
-                                        times[6] = currTime + ' ' + Integer.toString(row);
+                                        times[6] = Integer.toString(row) + ' ' + currTime;
                                     }
                                     addedCourse.setTimes(times);
                                     break;
@@ -323,14 +332,16 @@ public class TimeTableFragment extends Fragment {
                             }
                             mCoursesViewModel.saveData(addedCourse);
                             studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+
+                            updateCourseTable();
                     });
 
                 }
-                executor.diskIO().execute(()->{
-                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
-                });
+//                executor.diskIO().execute(()->{
+//                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+//                });
 
-                updateCourseTable();
+//                updateCourseTable();
 //                courseTable.setStudentCourse(studentCourse);
 //                courseTable.updateTable();
                 alertDialog.dismiss();
