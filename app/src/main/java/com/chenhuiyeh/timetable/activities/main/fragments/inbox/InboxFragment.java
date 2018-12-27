@@ -20,6 +20,7 @@ import com.chenhuiyeh.module_cache_data.viewmodel.InboxItemViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
 import com.chenhuiyeh.timetable.activities.main.fragments.courselist.CourseListFragment;
+import com.chenhuiyeh.timetable.activities.main.fragments.utils.ItemClickSupport;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -159,7 +160,79 @@ public class InboxFragment extends Fragment {
                 }
         );
         touchHelper.attachToRecyclerView(mRecyclerView);
+
+        ItemClickSupport.addTo(mRecyclerView)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        showDetailInboxItemDialog(position);
+                    }
+                });
     }
+    private void showDetailInboxItemDialog(int position){
+        android.app.AlertDialog.Builder editInboxItemDialogBuilder = new android.app.AlertDialog.Builder(getActivity())
+                .setTitle(R.string.detail_inbox_dialog_title);
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_add_inbox_item, null);
+        editInboxItemDialogBuilder.setView(dialogView);
+
+        final android.app.AlertDialog alertDialog = editInboxItemDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        EditText titleEditText = dialogView.findViewById(R.id.add_item_title);
+        EditText descripEditText = dialogView.findViewById(R.id.add_item_descrip);
+
+        titleEditText.setClickable(true);
+        titleEditText.setFocusable(true);
+        if (adapter.getItemAtPosition(position).getTitle() != null)
+            titleEditText.setText(adapter.getItemAtPosition(position).getTitle());
+
+        descripEditText.setClickable(true);
+        descripEditText.setFocusable(true);
+        if (adapter.getItemAtPosition(position).getDescription()!= null)
+            descripEditText.setText(adapter.getItemAtPosition(position).getDescription());
+
+        Button saveButton = dialogView.findViewById(R.id.add_inbox_dialog_save_button);
+        Button cancelButton = dialogView.findViewById(R.id.add_inbox_dialog_cancel_button);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = titleEditText.getText().toString();
+                String description = descripEditText.getText().toString();
+
+                int id = adapter.getItemAtPosition(position).getId();
+
+                executor.diskIO().execute(()->{
+                    InboxItem item = mInboxItemViewModel.loadDataByIdFromDb(id);
+                    item.setDescription(description);
+                    item.setTitle(title);
+
+                    executor.mainThread().execute(()->{
+                        mInboxItemList.set(position, item);
+                        adapter.notifyItemChanged(position);
+                        adapter.notifyDataSetChanged();
+                    });
+
+                    mInboxItemViewModel.saveData(item);
+                });
+
+                alertDialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+
+    }
+
 
     private void showAddInboxItemDialog() {
         android.app.AlertDialog.Builder addInboxDialogBuilder = new android.app.AlertDialog.Builder(getActivity())

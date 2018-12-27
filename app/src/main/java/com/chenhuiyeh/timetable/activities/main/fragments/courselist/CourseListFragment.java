@@ -1,5 +1,6 @@
 package com.chenhuiyeh.timetable.activities.main.fragments.courselist;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +17,11 @@ import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
 import com.chenhuiyeh.timetable.activities.main.fragments.TimeTableFragment;
+import com.chenhuiyeh.timetable.activities.main.fragments.utils.ItemClickSupport;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
 
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -146,6 +149,32 @@ public class CourseListFragment extends Fragment {
                 }
         );
         touchHelper.attachToRecyclerView(courseListRecyclerView);
+        ItemClickSupport.addTo(courseListRecyclerView)
+                .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        showCourseDetailDialog(position);
+                    }
+                });
+    }
+
+    private void showCourseDetailDialog(int position) {
+        String professor = adapter.getItemAtPosition(position).getProfessor();
+        if (professor == null || professor.isEmpty()) professor = "N/A";
+        String description = adapter.getItemAtPosition(position).getDescription();
+        if (description == null || description.isEmpty()) description = "N/A";
+
+        String message = String.format(Locale.CANADA, "%s%s\n%s%s\n%s%s\n%s%s",
+                "Course Name: ", adapter.getItemAtPosition(position).getName(),
+                "Course Code: ", adapter.getItemAtPosition(position).getCourseCode(),
+                "Professor：", professor,
+                "Description: ", description);
+        AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(getActivity())
+                .setTitle(adapter.getItemAtPosition(position).getCourseCode() + " Details")
+                .setMessage(message)
+                .setPositiveButton("Done", null);
+
+        courseDialogBuilder.show();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

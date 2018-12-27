@@ -8,8 +8,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/add_item_title"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
         android:hint="Title" />
 
     <EditText
@@ -20,8 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/add_item_descrip"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
         android:hint="Description"
         android:layout_below="@id/add_item_title"/>
 
@@ -33,7 +33,7 @@
         android:text="Add"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18dp"
-        android:layout_margin="16dp"
+        android:layout_margin="18dp"
         android:layout_alignParentEnd="true"/>
 
     <Button
@@ -44,7 +44,7 @@
         android:text="Cancel"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18dp"
-        android:layout_margin="16dp"
+        android:layout_margin="18dp"
         android:layout_alignParentStart="true"/>
 
 </RelativeLayout>
