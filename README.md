@@ -2,6 +2,13 @@
 A timetable/scheduling app paired with a todo list for students
 
 ## OverView
+A timetable app implemented with Android's architecture components using MVVM design pattern.
+
+## Installing
+Simply clone this repo and open it in Android Studio
+
+
+## User Interface
 
 ### menu to navigate throughout the app
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869706.png)
@@ -24,3 +31,8 @@ A timetable/scheduling app paired with a todo list for students
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869735.png)
 
 
+## Author
+Chen-Hui Yeh
+
+## Contributing
+Fork a copy of this repo and submit a pull request to me
