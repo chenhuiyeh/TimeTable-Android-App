@@ -5,7 +5,8 @@ A timetable/scheduling app paired with a todo list for students
 A timetable app implemented with Android's architecture components using MVVM design pattern.
 
 ## Installing
-Simply clone this repo and open it in Android Studio
+Clone or download this repo to your local environment
+Open with Android Studio
 
 
 ## User Interface
