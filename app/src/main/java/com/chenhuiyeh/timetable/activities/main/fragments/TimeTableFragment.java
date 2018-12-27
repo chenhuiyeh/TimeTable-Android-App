@@ -275,6 +275,14 @@ public class TimeTableFragment extends Fragment {
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
                         String[][] locations = addedCourse.getLocations();
                         String[] times = addedCourse.getTimes();
+                        String currName = courseName.getText().toString();
+                        String currProf = prof.getText().toString();
+                        String currDescription = description.getText().toString();
+
+                        addedCourse.setName(currName);
+                        addedCourse.setProfessor(currProf);
+                        addedCourse.setDescription(currDescription);
+
 
                         if (times[col-1] == null || times[col-1].isEmpty())
                             times[col-1] = Integer.toString(row);
@@ -293,7 +301,7 @@ public class TimeTableFragment extends Fragment {
                         }
 
                         for (int i = 0; i < times.length; i++) {
-                            Log.d(TAG,i + " " + times[i]);
+                            Log.d(TAG,"time added: " + i + " " + times[i]);
                         }
                         mCoursesViewModel.saveData(addedCourse);
                         studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
@@ -391,6 +399,7 @@ public class TimeTableFragment extends Fragment {
                     String descrip = descriptionEditText.getText().toString();
                     String thisLocation = locationEditText.getText().toString();
 
+                    addedCourse.setTimes(times);
                     addedCourse.setName(name);
                     addedCourse.setCourseCode(code);
                     addedCourse.setProfessor(professor);
