@@ -21,6 +21,7 @@ import com.chenhuiyeh.module_cache_data.model.StudentCourse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -183,7 +184,7 @@ public class TimeTableFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String name = courseName.getText().toString();
-                String code = courseCode.getText().toString();
+                String code = courseCode.getText().toString().toUpperCase(Locale.CANADA);
                 String descriptionText = description.getText().toString();
                 String locationText = location.getText().toString();
                 String professorText = prof.getText().toString();
@@ -208,49 +209,76 @@ public class TimeTableFragment extends Fragment {
                             {" "," "," "," "," "," "," "},
                             {" "," "," "," "," "," "," "}
                     };
-                    CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptionText, locations);
+                    String[][] descriptions = new String[][]{
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "},
+                            {" "," "," "," "," "," "," "}
+                    };
+
+                    CourseInfo newCourse = new CourseInfo(name, code, professorText, descriptions, locations);
 
                     switch (col) {
                         case 1: {
                             newCourse.setTimes(new String[]{Integer.toString(row), "", "", "", "", "", ""});
                             locations[row-1][0] = locationText;
+                            descriptions[row-1][0] = descriptionText;
+
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 2: {
                             newCourse.setTimes(new String[]{"", Integer.toString(row), "", "", "", "", ""});
                             locations[row-1][1] = locationText;
+                            descriptions[row-1][1] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 3: {
                             newCourse.setTimes(new String[]{"", "", Integer.toString(row), "", "", "", ""});
                             locations[row-1][2] = locationText;
+                            descriptions[row-1][2] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 4: {
                             newCourse.setTimes(new String[]{"", "", "", Integer.toString(row), "", "", ""});
                             locations[row-1][3] = locationText;
+                            descriptions[row-1][3] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 5: {
                             newCourse.setTimes(new String[]{"", "", "", "", Integer.toString(row), "", ""});
                             locations[row-1][4] = locationText;
+                            descriptions[row-1][4] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 6: {
                             newCourse.setTimes(new String[]{"", "", "", "", "", Integer.toString(row), ""});
                             locations[row-1][5] = locationText;
+                            descriptions[row-1][5] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
                         case 7: {
                             newCourse.setTimes(new String[]{"", "", "", "", "", "", Integer.toString(row)});
                             locations[row-1][6] = locationText;
+                            descriptions[row-1][6] = descriptionText;
                             newCourse.setLocations(locations);
+                            newCourse.setDescriptions(descriptions);
                             break;
                         }
 
@@ -274,14 +302,14 @@ public class TimeTableFragment extends Fragment {
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
                         String[][] locations = addedCourse.getLocations();
+                        String[][] descriptions = addedCourse.getDescriptions();
                         String[] times = addedCourse.getTimes();
                         String currName = courseName.getText().toString();
                         String currProf = prof.getText().toString();
-                        String currDescription = description.getText().toString();
 
                         addedCourse.setName(currName);
                         addedCourse.setProfessor(currProf);
-                        addedCourse.setDescription(currDescription);
+
 
 
                         if (times[col-1] == null || times[col-1].isEmpty())
@@ -299,6 +327,9 @@ public class TimeTableFragment extends Fragment {
                                 Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
                             }
                         }
+
+                        descriptions[row-1][col-1] = descriptionText;
+                        addedCourse.setDescriptions(descriptions);
 
                         for (int i = 0; i < times.length; i++) {
                             Log.d(TAG,"time added: " + i + " " + times[i]);
@@ -325,10 +356,37 @@ public class TimeTableFragment extends Fragment {
     }
 
     private void updateCourseTable() {
+        List<CourseInfo> courseInfoListSample = new ArrayList<>();
+        String[][] tempLoca = new String[][]{
+        {"Sample Location"," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "},
+        {" "," "," "," "," "," "," "}};
+        String[][] tempDesctip = new String[][]{
+                {"This is a sample description"," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "},
+                {" "," "," "," "," "," "," "}};
+        courseInfoListSample.add(new CourseInfo("Sample", "Sample Code", "Sample Prof", tempLoca, tempDesctip));
         executor.diskIO().execute(()->{
             studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
             executor.mainThread().execute(()->{
                 courseTable.setStudentCourse(studentCourse);
+                if (studentCourse == null || studentCourse.getCourseList() == null || studentCourse.getCourseList().isEmpty()) {
+                    studentCourse.setCourseList(courseInfoListSample);
+                    courseTable.setStudentCourse(studentCourse);
+                }
+
                 courseTable.updateTable();
             });
 
@@ -376,8 +434,8 @@ public class TimeTableFragment extends Fragment {
 
         descriptionEditText.setClickable(true);
         descriptionEditText.setFocusable(true);
-        if(course.getDescription()!= null)
-            descriptionEditText.setText(course.getDescription());
+        if(course.getDescriptions()!= null && course.getDescriptions()[row-1].length != 0)
+            descriptionEditText.setText(course.getDescriptions()[row-1][col-1]);
 
         courseDialogBuilder.setView(dialogView);
 
@@ -392,18 +450,19 @@ public class TimeTableFragment extends Fragment {
                     CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(course.getCourseCode());
                     String[] times = course.getTimes();
                     String[][] locations = course.getLocations();
+                    String[][] descriptions = course.getDescriptions();
 
                     String name = courseNameEditText.getText().toString();
-                    String code = courseCodeEditText.getText().toString();
+                    String code = courseCodeEditText.getText().toString().toUpperCase(Locale.CANADA);
                     String professor = profEditText.getText().toString();
-                    String descrip = descriptionEditText.getText().toString();
+                    String thisDescrip = descriptionEditText.getText().toString();
                     String thisLocation = locationEditText.getText().toString();
 
                     addedCourse.setTimes(times);
                     addedCourse.setName(name);
                     addedCourse.setCourseCode(code);
                     addedCourse.setProfessor(professor);
-                    addedCourse.setDescription(descrip);
+
 
                     for (int i = 0; i < locations.length; i++) {
                         for (int j = 0; j < locations[i].length; j++) {
@@ -412,6 +471,9 @@ public class TimeTableFragment extends Fragment {
                     }
                     locations[row-1][col-1] = thisLocation;
                     addedCourse.setLocations(locations);
+
+                    descriptions[row-1][col-1] = thisDescrip;
+                    addedCourse.setDescriptions(descriptions);
 
                     mCoursesViewModel.saveData(addedCourse);
                     studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());

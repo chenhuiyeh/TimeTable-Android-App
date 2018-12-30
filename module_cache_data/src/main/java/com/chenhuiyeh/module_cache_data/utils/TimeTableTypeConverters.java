@@ -49,7 +49,7 @@ public class TimeTableTypeConverters {
     
     @TypeConverter
     public String[][] toDoubleArray(String strings) {
-        String[][]result = new String[7][7];
+        String[][]result = new String[9][7];
 
         int i = 0;
         for(String s : strings.split(";")) {
@@ -59,7 +59,7 @@ public class TimeTableTypeConverters {
                 Log.d(TAG, "toDoubleArray: " + i + " " + j);
                 j++;
             }
-            if(i < 6)
+            if(i < 8)
                 i++;
             else
                 break;

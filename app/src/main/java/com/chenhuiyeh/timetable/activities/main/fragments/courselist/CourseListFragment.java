@@ -16,7 +16,6 @@ import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
-import com.chenhuiyeh.timetable.activities.main.fragments.TimeTableFragment;
 import com.chenhuiyeh.timetable.activities.main.fragments.utils.ItemClickSupport;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
 
@@ -161,14 +160,12 @@ public class CourseListFragment extends Fragment {
     private void showCourseDetailDialog(int position) {
         String professor = adapter.getItemAtPosition(position).getProfessor();
         if (professor == null || professor.isEmpty()) professor = "N/A";
-        String description = adapter.getItemAtPosition(position).getDescription();
-        if (description == null || description.isEmpty()) description = "N/A";
 
-        String message = String.format(Locale.CANADA, "%s%s\n%s%s\n%s%s\n%s%s",
+        String message = String.format(Locale.CANADA, "%s%s\n%s%s\n%s%s\n",
                 "Course Name: ", adapter.getItemAtPosition(position).getName(),
                 "Course Code: ", adapter.getItemAtPosition(position).getCourseCode(),
-                "Professor：", professor,
-                "Description: ", description);
+                "Professor：", professor);
+
         AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(getActivity())
                 .setTitle(adapter.getItemAtPosition(position).getCourseCode() + " Details")
                 .setMessage(message)
@@ -232,8 +229,11 @@ public class CourseListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull CoursesAdapter.ViewHolder holder, int position) {
-            holder.courseNameTextView.setText(currentCourses.get(position).getName());
-            holder.courseNameImageView.setLetter(currentCourses.get(position).getName().charAt(0));
+            if (currentCourses.get(position).getName()!=null)
+                holder.courseNameTextView.setText(currentCourses.get(position).getName());
+            else
+                holder.courseNameTextView.setText("N/A");
+            holder.courseNameImageView.setLetter(currentCourses.get(position).getCourseCode().charAt(0));
             holder.courseCodeTextView.setText(currentCourses.get(position).getCourseCode());
         }
 

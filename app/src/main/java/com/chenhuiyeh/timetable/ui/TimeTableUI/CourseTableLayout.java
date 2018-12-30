@@ -206,7 +206,7 @@ public class CourseTableLayout extends LinearLayout {
     public void showCourse(StudentCourse studentCourse) {
         resetCourseTable();
         int color_index = 0;
-        int[] color_array = getColorArray(studentCourse.getCourseList().size());
+        int[] color_array = getColorArray(9);
         int count = 0;
         for (CourseInfo item : studentCourse.getCourseList()) {
             boolean isHaveTime = false;

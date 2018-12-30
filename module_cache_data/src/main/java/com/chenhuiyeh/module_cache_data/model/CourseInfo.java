@@ -27,26 +27,28 @@ public class CourseInfo {
     private String[] times;
 
     private String professor;
-    private String description;
+
+    @TypeConverters(TimeTableTypeConverters.class)
+    private String[][] descriptions;
 
     @TypeConverters(TimeTableTypeConverters.class)
     private String[][] locations;
 
     @Ignore
-    public CourseInfo(String name, String courseCode, String professor, String description, String[][] locations) {
+    public CourseInfo(String name, String courseCode, String professor, String[][] descriptions, String[][] locations) {
         this.name = name;
         this.courseCode = courseCode;
         this.professor = professor;
-        this.description = description;
+        this.descriptions = descriptions;
         this.locations = locations;
     }
 
-    public CourseInfo(String name, String courseCode, String[] times, String professor, String description, String[][] locations) {
+    public CourseInfo(String name, String courseCode, String[] times, String professor, String[][] descriptions, String[][] locations) {
         this.name = name;
         this.courseCode = courseCode;
         this.times = times;
         this.professor = professor;
-        this.description = description;
+        this.descriptions = descriptions;
         this.locations = locations;
     }
 
@@ -98,12 +100,12 @@ public class CourseInfo {
         this.professor = professor;
     }
 
-    public String getDescription() {
-        return description;
+    public String[][] getDescriptions() {
+        return descriptions;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescriptions(String[][] descriptions) {
+        this.descriptions = descriptions;
     }
 
     public String[][] getLocations() {
