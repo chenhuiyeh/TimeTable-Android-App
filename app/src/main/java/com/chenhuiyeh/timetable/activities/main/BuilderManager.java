@@ -20,7 +20,7 @@ public class BuilderManager {
     private static int[] imageResources = new int[]{
             R.drawable.ic_email,
             R.drawable.ic_action_book,
-            R.drawable.ic_list
+//            R.drawable.ic_list
     };
 
     private static int imageResourceIndex = 0;
@@ -28,7 +28,7 @@ public class BuilderManager {
     private static String[] stringCaptions = new String[] {
             "Inbox",
             "TimeTable",
-            "My Courses"
+//            "My Courses"
     };
 
     private static int stringCaptionsIndex = 0;

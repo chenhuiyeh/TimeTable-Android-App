@@ -13,7 +13,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-@Database(entities = {CourseInfo.class, InboxItem.class}, version = 1)
+@Database(entities = {CourseInfo.class, InboxItem.class}, version = 2)
 @TypeConverters(TimeTableTypeConverters.class)
 public abstract class AppDatabase extends RoomDatabase {
 

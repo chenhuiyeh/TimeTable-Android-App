@@ -1,10 +1,14 @@
 package com.chenhuiyeh.timetable.activities.main.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,6 +30,8 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
@@ -124,7 +130,7 @@ public class TimeTableFragment extends Fragment {
         });
 
 
-        // Set timetable
+        // Set default timetable - leave it as is
         executor.diskIO().execute(()->{
             studentCourse.setCourseList(courses);
             courseTable.setStudentCourse(studentCourse);
@@ -138,7 +144,6 @@ public class TimeTableFragment extends Fragment {
         courseTable.setTableInitializeListener(new CourseTableLayout.TableInitializeListener() {
             @Override
             public void onTableInitialized(CourseTableLayout course_table) {
-//                Toast.makeText(getActivity(), "Finish intialized", Toast.LENGTH_SHORT).show();
             }
         });
         courseTable.setOnCourseClickListener(new View.OnClickListener() {
@@ -148,6 +153,7 @@ public class TimeTableFragment extends Fragment {
                 CourseBlock block = (CourseBlock) view;
                 int row = block.getRow();
                 int col = block.getCol();
+                Log.d(TAG, "onClick: row: " + row + "col: " + col);
                 if (item != null)
                     showInfoDialog(item, row, col);
                 else {
@@ -156,6 +162,53 @@ public class TimeTableFragment extends Fragment {
             }
         });
 
+        courseTable.setOnCourseLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG, "onLongClick: long clicked");
+                CourseInfo item = (CourseInfo) v.getTag();
+                CourseBlock block = (CourseBlock) v;
+                int row = block.getRow();
+                int col = block.getCol();
+                if (item != null) {
+                    showDeleteDialog(item, row, col);
+                }
+                else {
+                    showAddCourseDialog(row, col);
+                }
+                return true;
+            }
+        });
+
+    }
+
+    private void showDeleteDialog(CourseInfo courseInfo, final int row, final int col) {
+        android.app.AlertDialog.Builder addCourseDialogBuilder = new android.app.AlertDialog.Builder(getActivity())
+                .setTitle(R.string.delete_dialog_title);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_delete, null);
+        addCourseDialogBuilder.setView(dialogView);
+
+        final android.app.AlertDialog alertDialog = addCourseDialogBuilder.create();
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+        Button yesButton = dialogView.findViewById(R.id.yes_button);
+        Button noButton = dialogView.findViewById(R.id.no_button);
+
+        yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        noButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     private void showAddCourseDialog(final int row, final int col) {
@@ -164,6 +217,7 @@ public class TimeTableFragment extends Fragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
+
         Button addButton;
         Button cancelButton;
         addButton = dialogView.findViewById(R.id.dialog_save_button);
@@ -198,6 +252,7 @@ public class TimeTableFragment extends Fragment {
                 }
 
                 if (!isInList) {
+                    Log.d(TAG, "onClick: course: " + code + " not in list");
                     String[][] locations = new String[][]{
                             {" "," "," "," "," "," "," "},
                             {" "," "," "," "," "," "," "},
@@ -288,17 +343,17 @@ public class TimeTableFragment extends Fragment {
                             Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
                         }
                     }
-                    courseInfoList.add(newCourse); // for course list frag
+                    courseInfoList.add(newCourse); // for course list check existence
                     Log.d(TAG, "onClick: " + newCourse.getName() + "added");
 
                     mCoursesViewModel.saveData(newCourse);
+                    Log.d(TAG, "onClick: course: " + newCourse.getName() + "saved");
 
-                    executor.diskIO().execute(()->{
-                        studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
-                    });
+                    studentCourse.setCourseList(courses);
 
                     updateCourseTable();
                 } else {
+                    Log.d(TAG, "onClick: course: " + code + " in list");
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
                         String[][] locations = addedCourse.getLocations();
@@ -309,8 +364,6 @@ public class TimeTableFragment extends Fragment {
 
                         addedCourse.setName(currName);
                         addedCourse.setProfessor(currProf);
-
-
 
                         if (times[col-1] == null || times[col-1].isEmpty())
                             times[col-1] = Integer.toString(row);
@@ -335,7 +388,7 @@ public class TimeTableFragment extends Fragment {
                             Log.d(TAG,"time added: " + i + " " + times[i]);
                         }
                         mCoursesViewModel.saveData(addedCourse);
-                        studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+                        studentCourse.setCourseList(courses);
 
                         updateCourseTable();
                     });
@@ -393,18 +446,20 @@ public class TimeTableFragment extends Fragment {
         });
     }
 
+
     private void showInfoDialog(CourseInfo course, final int row, final int col) {
 
         AlertDialog.Builder courseDialogBuilder = new AlertDialog.Builder(getActivity())
                 .setTitle(course.getCourseCode());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_add_course, null);
-        Button addButton;
+        View dialogView = inflater.inflate(R.layout.dialog_edit_course_detail, null);
+
+        Button saveButton;
         Button cancelButton;
-        addButton = dialogView.findViewById(R.id.dialog_save_button);
+        saveButton = dialogView.findViewById(R.id.dialog_save_button);
         cancelButton = dialogView.findViewById(R.id.dialog_cancel_button);
-        addButton.setText("Save");
+        saveButton.setText("Save");
 
         final EditText courseNameEditText = dialogView.findViewById(R.id.add_course_name);
         final EditText courseCodeEditText = dialogView.findViewById(R.id.add_course_course_code);
@@ -443,43 +498,40 @@ public class TimeTableFragment extends Fragment {
         alertDialog.setCancelable(true);
         alertDialog.show();
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                executor.diskIO().execute(()-> {
-                    CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(course.getCourseCode());
-                    String[] times = course.getTimes();
-                    String[][] locations = course.getLocations();
-                    String[][] descriptions = course.getDescriptions();
+                String[] times = course.getTimes();
+                String[][] locations = course.getLocations();
+                String[][] descriptions = course.getDescriptions();
 
-                    String name = courseNameEditText.getText().toString();
-                    String code = courseCodeEditText.getText().toString().toUpperCase(Locale.CANADA);
-                    String professor = profEditText.getText().toString();
-                    String thisDescrip = descriptionEditText.getText().toString();
-                    String thisLocation = locationEditText.getText().toString();
+                String name = courseNameEditText.getText().toString();
+                String code = courseCodeEditText.getText().toString().toUpperCase(Locale.CANADA);
+                String professor = profEditText.getText().toString();
+                String thisDescrip = descriptionEditText.getText().toString();
+                String thisLocation = locationEditText.getText().toString();
 
-                    addedCourse.setTimes(times);
-                    addedCourse.setName(name);
-                    addedCourse.setCourseCode(code);
-                    addedCourse.setProfessor(professor);
+                course.setTimes(times);
+                course.setName(name);
+                course.setCourseCode(code);
+                course.setProfessor(professor);
 
 
-                    for (int i = 0; i < locations.length; i++) {
-                        for (int j = 0; j < locations[i].length; j++) {
-                            Log.d(TAG, "onClick: location:" + i + " " + j + " " + locations[i][j]);
-                        }
+                for (int i = 0; i < locations.length; i++) {
+                    for (int j = 0; j < locations[i].length; j++) {
+                        Log.d(TAG, "onClick: location:" + i + " " + j + " " + locations[i][j]);
                     }
-                    locations[row-1][col-1] = thisLocation;
-                    addedCourse.setLocations(locations);
+                }
+                locations[row-1][col-1] = thisLocation;
+                course.setLocations(locations);
 
-                    descriptions[row-1][col-1] = thisDescrip;
-                    addedCourse.setDescriptions(descriptions);
+                descriptions[row-1][col-1] = thisDescrip;
+                course.setDescriptions(descriptions);
 
-                    mCoursesViewModel.saveData(addedCourse);
-                    studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+                mCoursesViewModel.saveData(course);
+                studentCourse.setCourseList(courses);
 
-                    updateCourseTable();
-                });
+                updateCourseTable();
                 alertDialog.dismiss();
             }
         });
@@ -510,6 +562,7 @@ public class TimeTableFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mCoursesViewModel.loadLiveDataFromDb().removeObservers(this);
+//        mCoursesViewModel.loadLiveDataFromDb().removeObservers(this);
     }
+
 }

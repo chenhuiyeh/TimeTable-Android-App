@@ -40,6 +40,7 @@ import androidx.annotation.Nullable;
 
 /**
  * Created by blackmaple on 2017/5/9.
+ * modified by chenhuiyeh
  */
 
 public class CourseTableLayout extends LinearLayout {
@@ -54,6 +55,7 @@ public class CourseTableLayout extends LinearLayout {
     private boolean isDisplayNoTime = false;
     private int ROW_HEIGHT;
     private View.OnClickListener onClickListener = null;
+    private View.OnLongClickListener mOnLongClickListener = null;
     private TableInitializeListener initializeListener = null;
     private LinearLayout courseContainer;
     private StudentCourse studentCourse = new StudentCourse();
@@ -118,6 +120,10 @@ public class CourseTableLayout extends LinearLayout {
 
     public void setOnCourseClickListener(View.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
+    }
+
+    public void setOnCourseLongClickListener(View.OnLongClickListener onCourseLongClickListener) {
+        this.mOnLongClickListener = onCourseLongClickListener;
     }
 
     public void setTableInitializeListener(
@@ -188,6 +194,9 @@ public class CourseTableLayout extends LinearLayout {
                     CourseBlock tableCell = (CourseBlock) tableRow.getChildAt(j);
                     tableCell.resetBlock();
                     tableCell.setOnClickListener(onClickListener);
+                    tableCell.setOnLongClickListener(mOnLongClickListener);
+                    tableCell.setLongClickable(true);
+                    tableCell.setClickable(true);
                     tableCell.setRow(i);
                     tableCell.setCol(j);
                 }
@@ -289,6 +298,9 @@ public class CourseTableLayout extends LinearLayout {
             table_cell.setTag(course);
             table_cell.setBackgroundColor(color);
             table_cell.setOnClickListener(onClickListener);
+            table_cell.setOnLongClickListener(mOnLongClickListener);
+            table_cell.setLongClickable(true);
+            table_cell.setClickable(true);
 //            setAnimation(table_cell);
         }
     }

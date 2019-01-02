@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -89,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
         leftBmb = (BoomMenuButton)actionBar.findViewById(R.id.action_bar_left_bmb);
 
         leftBmb.setButtonEnum(ButtonEnum.TextOutsideCircle);
-        leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_2);
-        leftBmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_2);
+        leftBmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_2_2);
+        leftBmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_2_2);
         for (int i = 0; i < leftBmb.getPiecePlaceEnum().pieceNumber(); i++){
             leftBmb.addBuilder(BuilderManager.getTextOutsideCircleButtonBuilder());
         }
@@ -155,4 +158,5 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

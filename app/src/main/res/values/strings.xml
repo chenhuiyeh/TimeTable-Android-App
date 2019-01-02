@@ -37,6 +37,7 @@
     <string name="course_list_actionbar">My Courses</string>
     <string name="add_course_dialog_title">Add Course</string>
     <string name="detail_inbox_dialog_title">Details</string>
+    <string name="delete_dialog_title">Are you sure you want to delete this item?</string>
     <string name="simple_circle_button_example">Simple Circle Button Example</string>
     <string name="text_inside_circle_button_example">Text Inside Circle Button Example</string>
     <string name="text_outside_circle_button_example">Text Outside Circle Button Example</string>
