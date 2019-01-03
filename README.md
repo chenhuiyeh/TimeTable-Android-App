@@ -22,9 +22,11 @@ Open with Android Studio
 
 
 add a course to the timetable by clicking on any of the time slots in the timetable fragment
+
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/add-course.png)
 
 long click on course to delete item
+
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/delete-course.png)
 
 inbox fragment
