@@ -30,6 +30,7 @@ long click on course to delete item
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/delete-course.png)
 
 inbox fragment
+
 ![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/inbox-list.png)
 
 adding a to-do item to the inbox
