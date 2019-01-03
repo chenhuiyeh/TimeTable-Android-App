@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.chenhuiyeh.module_cache_data.AppDatabase;
+import com.chenhuiyeh.module_cache_data.OnSaveDataListener;
 import com.chenhuiyeh.module_cache_data.utils.AppExecutor;
 import com.chenhuiyeh.module_cache_data.dao.CoursesDao;
 import com.chenhuiyeh.module_cache_data.model.CourseInfo;
@@ -21,6 +22,9 @@ public class CoursesRepository {
     private CoursesDao mCoursesDao;
     private AppExecutor executor;
     private Context context;
+    private OnSaveDataListener mOnSaveDataListener;
+
+    private MutableLiveData<List<CourseInfo>> coursesLiveData;
 
     private MutableLiveData<List<CourseInfo>> cachedCourses = new MutableLiveData<>();
 
@@ -28,7 +32,7 @@ public class CoursesRepository {
         this.executor = AppExecutor.getInstance();
         this.context = context;
         this.mCoursesDao = AppDatabase.getInstance(context).courseDao();
-
+        coursesLiveData = new MutableLiveData<>();
         executor.diskIO().execute(()->{
             List<CourseInfo> courseInfos= mCoursesDao.loadDataFromDB();
             executor.mainThread().execute(()->{
@@ -49,16 +53,16 @@ public class CoursesRepository {
     }
 
     public MutableLiveData<List<CourseInfo>> loadLiveDataFromDb() {
-        final MutableLiveData<List<CourseInfo>> courses = new MutableLiveData<>();
+
         executor.diskIO().execute(()->{
             List<CourseInfo> courseInfo = mCoursesDao.loadDataFromDB();
             executor.mainThread().execute(()->{
-                courses.setValue(courseInfo);
+                coursesLiveData.postValue(courseInfo);
             });
 
         });
 
-        return courses;
+        return coursesLiveData;
     }
 
     public MutableLiveData<CourseInfo> loadLiveDataByIdFromDb(String _id) {
@@ -66,7 +70,7 @@ public class CoursesRepository {
         executor.diskIO().execute(()->{
             CourseInfo courseInfo = mCoursesDao.loadDataByIdFromDb(_id);
             executor.mainThread().execute(()->{
-                course.setValue(courseInfo);
+                course.postValue(courseInfo);
             });
 
         });
@@ -87,12 +91,18 @@ public class CoursesRepository {
             if (courses == null) return;
             Log.d(TAG, "saveData: non null");
             mCoursesDao.saveData(courses);
+            coursesLiveData.postValue(mCoursesDao.loadDataFromDB());
+            executor.mainThread().execute(()->{
+                if(mOnSaveDataListener!= null)
+                    mOnSaveDataListener.onSaveCompleted();
+            });
         });
     }
 
     public void updataData(CourseInfo ... courses) {
         executor.diskIO().execute(()->{
             mCoursesDao.updateData(courses);
+            coursesLiveData.postValue(mCoursesDao.loadDataFromDB());
         });
     }
 

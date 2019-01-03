@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.chenhuiyeh.module_cache_data.OnSaveDataListener;
 import com.chenhuiyeh.module_cache_data.utils.AppExecutor;
 import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.timetable.R;
@@ -43,7 +44,7 @@ import androidx.lifecycle.ViewModelProviders;
  * Use the {@link TimeTableFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TimeTableFragment extends Fragment {
+public class TimeTableFragment extends Fragment implements OnSaveDataListener {
 
     private static final String TAG = "TimeTableFragment";
     // TODO: Rename parameter arguments, choose names that match
@@ -51,14 +52,8 @@ public class TimeTableFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private CourseTableLayout courseTable;
 
-
-    private List<CourseInfo> courseInfoList= new ArrayList<>(); // for course list frag
     private StudentCourse studentCourse = new StudentCourse();
 
     List<CourseInfo> courses = new ArrayList<>();
@@ -67,6 +62,12 @@ public class TimeTableFragment extends Fragment {
     private CoursesViewModel mCoursesViewModel;
     private AppExecutor executor;
 
+    @Override
+    public void onSaveCompleted() {
+        studentCourse.setCourseList(courses);
+        courseTable.setStudentCourse(studentCourse);
+        courseTable.updateTable();
+    }
 
     public TimeTableFragment() {
         // Required empty public constructor
@@ -75,18 +76,12 @@ public class TimeTableFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment TimeTableFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TimeTableFragment newInstance(String param1, String param2) {
+    public static TimeTableFragment newInstance() {
         TimeTableFragment fragment = new TimeTableFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -114,11 +109,19 @@ public class TimeTableFragment extends Fragment {
             ((MainActivity)getActivity()).setMainTitle(R.string.app_name);
 
         executor = AppExecutor.getInstance();
+
+        // Set default timetable - leave it as is
         executor.diskIO().execute(()->{
             courses = mCoursesViewModel.loadDataFromDb();
+            studentCourse.setCourseList(courses);
+            courseTable.setStudentCourse(studentCourse);
+            executor.mainThread().execute(()->{
+                courseTable.updateTable();
+            });
+
         });
 
-        currCourse.addSource(mCoursesViewModel.loadLiveDataFromDb(), new Observer<List<CourseInfo>>() {
+        mCoursesViewModel.loadLiveDataFromDb().observeForever(new Observer<List<CourseInfo>>() {
             @Override
             public void onChanged(List<CourseInfo> courseInfos) {
                 Log.d(TAG, "onChanged: changed data!!");
@@ -127,17 +130,6 @@ public class TimeTableFragment extends Fragment {
                 courseTable.setStudentCourse(studentCourse);
                 courseTable.updateTable();
             }
-        });
-
-
-        // Set default timetable - leave it as is
-        executor.diskIO().execute(()->{
-            studentCourse.setCourseList(courses);
-            courseTable.setStudentCourse(studentCourse);
-            executor.mainThread().execute(()->{
-                courseTable.updateTable();
-            });
-
         });
 
 
@@ -182,7 +174,7 @@ public class TimeTableFragment extends Fragment {
 
     }
 
-    private void showDeleteDialog(CourseInfo courseInfo, final int row, final int col) {
+    private void showDeleteDialog(CourseInfo course, final int row, final int col) {
         android.app.AlertDialog.Builder addCourseDialogBuilder = new android.app.AlertDialog.Builder(getActivity())
                 .setTitle(R.string.delete_dialog_title);
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -199,6 +191,53 @@ public class TimeTableFragment extends Fragment {
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean isEmptyTime = true;
+                String[]times = course.getTimes();
+                Log.d(TAG, "onClick: times before deletion: " + times[col-1]);
+
+                String[][] locations = course.getLocations();
+                locations[row-1][col-1] = " ";
+                course.setLocations(locations);
+
+                String[][] descriptions = course.getDescriptions();
+                descriptions[row-1][col-1] = " ";
+                course.setDescriptions(descriptions);
+
+                String timesOfDay = times[col-1];
+                String[] timesOfDayArr = timesOfDay.split(" ");
+                for (int i = 0; i < timesOfDayArr.length; i++) {
+                    if (timesOfDayArr[i].equals(Integer.toString(row))){
+                        timesOfDayArr[i] = "";
+                        Log.d(TAG, "onClick: time "+ row + "is being deleted");
+                    }
+
+                }
+
+                String newTimes = "";
+                for (int i = 0; i < timesOfDayArr.length; i++) {
+                    Log.d(TAG, "onClick: " +timesOfDayArr[i]);
+                    newTimes += timesOfDayArr[i] + " ";
+
+                times[col-1] = newTimes;
+                Log.d(TAG, "onClick: times after deletion: " + times[col-1]);
+                Log.d(TAG, "onClick: row: " + (row));
+                course.setTimes(times);
+
+                }
+                for (int i = 0; i < times.length; i++) {
+                    if (times[i] != null || times[i] != "")
+                        isEmptyTime = false;
+                }
+
+                if (!isEmptyTime)
+                    mCoursesViewModel.saveData(course);
+                else {
+                    mCoursesViewModel.deleteData(course);
+                    studentCourse.setCourseList(courses);
+                    updateCourseTable();
+                }
+
+
                 alertDialog.dismiss();
             }
         });
@@ -338,21 +377,22 @@ public class TimeTableFragment extends Fragment {
                         }
 
                     }
-                    for (int i = 0; i < locations.length; i++) {
-                        for (int j = 0; j < locations[i].length; j++) {
-                            Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
-                        }
-                    }
-                    courseInfoList.add(newCourse); // for course list check existence
-                    Log.d(TAG, "onClick: " + newCourse.getName() + "added");
+//                    for (int i = 0; i < locations.length; i++) {
+//                        for (int j = 0; j < locations[i].length; j++) {
+//                            Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
+//                        }
+//                    }
+//                    courseInfoList.add(newCourse); // for course list check existence
+//                    Log.d(TAG, "onClick: " + newCourse.getName() + "added");
 
                     mCoursesViewModel.saveData(newCourse);
                     Log.d(TAG, "onClick: course: " + newCourse.getName() + "saved");
 
-                    studentCourse.setCourseList(courses);
-
-                    updateCourseTable();
-                } else {
+//                    studentCourse.setCourseList(courses);
+//                    courseTable.setStudentCourse(studentCourse);
+//                    courseTable.updateTable();
+//                    updateCourseTable();
+                } else { // in list already
                     Log.d(TAG, "onClick: course: " + code + " in list");
                     executor.diskIO().execute(()->{
                         CourseInfo addedCourse = mCoursesViewModel.loadDataByIdFromDb(code);
@@ -371,27 +411,22 @@ public class TimeTableFragment extends Fragment {
                             String currTime = times[col-1];
                             times[col-1] = Integer.toString(row) + ' ' + currTime;
                         }
+                        Log.d(TAG, "onClick: times: " + times[col-1]);
                         addedCourse.setTimes(times);
 
                         locations[row-1][col-1] = locationText;
                         addedCourse.setLocations(locations);
-                        for (int i = 0; i < locations.length; i++) {
-                            for (int j = 0; j < locations[i].length; j++) {
-                                Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
-                            }
-                        }
 
                         descriptions[row-1][col-1] = descriptionText;
                         addedCourse.setDescriptions(descriptions);
 
-                        for (int i = 0; i < times.length; i++) {
-                            Log.d(TAG,"time added: " + i + " " + times[i]);
-                        }
                         mCoursesViewModel.saveData(addedCourse);
-                        studentCourse.setCourseList(courses);
 
-                        updateCourseTable();
+//                        updateCourseTable();
                     });
+//                    studentCourse.setCourseList(courses);
+//                    courseTable.setStudentCourse(studentCourse);
+//                    courseTable.updateTable();
 
                 }
 
@@ -409,37 +444,10 @@ public class TimeTableFragment extends Fragment {
     }
 
     private void updateCourseTable() {
-        List<CourseInfo> courseInfoListSample = new ArrayList<>();
-        String[][] tempLoca = new String[][]{
-        {"Sample Location"," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "},
-        {" "," "," "," "," "," "," "}};
-        String[][] tempDesctip = new String[][]{
-                {"This is a sample description"," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "},
-                {" "," "," "," "," "," "," "}};
-        courseInfoListSample.add(new CourseInfo("Sample", "Sample Code", "Sample Prof", tempLoca, tempDesctip));
         executor.diskIO().execute(()->{
-            studentCourse.setCourseList(mCoursesViewModel.loadDataFromDb());
+            studentCourse.setCourseList(courses);
             executor.mainThread().execute(()->{
                 courseTable.setStudentCourse(studentCourse);
-                if (studentCourse == null || studentCourse.getCourseList() == null || studentCourse.getCourseList().isEmpty()) {
-                    studentCourse.setCourseList(courseInfoListSample);
-                    courseTable.setStudentCourse(studentCourse);
-                }
-
                 courseTable.updateTable();
             });
 
@@ -531,7 +539,9 @@ public class TimeTableFragment extends Fragment {
                 mCoursesViewModel.saveData(course);
                 studentCourse.setCourseList(courses);
 
-                updateCourseTable();
+                courseTable.setStudentCourse(studentCourse);
+                courseTable.updateTable();
+//                updateCourseTable();
                 alertDialog.dismiss();
             }
         });
@@ -562,7 +572,7 @@ public class TimeTableFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-//        mCoursesViewModel.loadLiveDataFromDb().removeObservers(this);
     }
+
 
 }

@@ -17,7 +17,7 @@ public class TimeTableTypeConverters {
 
     @TypeConverter
     public String[] toArray(String concatenatedStrings) {
-        String[] myStrings = new String[14];
+        String[] myStrings = new String[5];
         int i = 0;
         for(String s : concatenatedStrings.split(",")) {
             myStrings[i] = s;

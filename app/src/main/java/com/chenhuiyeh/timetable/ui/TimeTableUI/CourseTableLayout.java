@@ -215,9 +215,9 @@ public class CourseTableLayout extends LinearLayout {
                     .getChildAt(i);
             if (tableRow != null) {
                 CourseBlock satText = (CourseBlock) tableRow.getChildAt(6);
-                satText.setVisibility(isDisplaySat ? View.VISIBLE : View.GONE);
+                satText.setVisibility(View.GONE);
                 CourseBlock sunText = (CourseBlock) tableRow.getChildAt(7);
-                sunText.setVisibility(isDisplaySun ? View.VISIBLE : View.GONE);
+                sunText.setVisibility(View.GONE);
                 CourseBlock noTimeText = (CourseBlock) tableRow.getChildAt(8);
                 noTimeText.setVisibility(isDisplayNoTime ? View.INVISIBLE
                         : View.GONE);
@@ -236,7 +236,7 @@ public class CourseTableLayout extends LinearLayout {
         int count = 0;
         for (CourseInfo item : studentCourse.getCourseList()) {
             boolean isHaveTime = false;
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 5; i++) {
                 String time = item.getTimes()[i];
                 Log.d(TAG, "showCourse: time: " +item.getName() + time);
                 if(time!=null) {
@@ -247,8 +247,8 @@ public class CourseTableLayout extends LinearLayout {
                             int row = Integer.parseInt(t);
                             int col = i + 1;
                             isDisplayABCD = isDisplayABCD || row > 9;
-                            isDisplaySun = isDisplaySun || i == 6;
-                            isDisplaySat = isDisplaySat || i == 5;
+                            isDisplaySun = false;
+                            isDisplaySat = false;
                             setTableCell(row, col, color_array[color_index], item);
                             isHaveTime = true;
                         }
