@@ -31,8 +31,6 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
@@ -47,10 +45,6 @@ import androidx.lifecycle.ViewModelProviders;
 public class TimeTableFragment extends Fragment implements OnSaveDataListener {
 
     private static final String TAG = "TimeTableFragment";
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private CourseTableLayout courseTable;
 
@@ -145,7 +139,6 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
                 CourseBlock block = (CourseBlock) view;
                 int row = block.getRow();
                 int col = block.getCol();
-                Log.d(TAG, "onClick: row: " + row + "col: " + col);
                 if (item != null)
                     showInfoDialog(item, row, col);
                 else {
@@ -377,21 +370,10 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
                         }
 
                     }
-//                    for (int i = 0; i < locations.length; i++) {
-//                        for (int j = 0; j < locations[i].length; j++) {
-//                            Log.d(TAG, "onClick: add new location:" + i + " " + j + " " + locations[i][j]);
-//                        }
-//                    }
-//                    courseInfoList.add(newCourse); // for course list check existence
-//                    Log.d(TAG, "onClick: " + newCourse.getName() + "added");
 
                     mCoursesViewModel.saveData(newCourse);
                     Log.d(TAG, "onClick: course: " + newCourse.getName() + "saved");
 
-//                    studentCourse.setCourseList(courses);
-//                    courseTable.setStudentCourse(studentCourse);
-//                    courseTable.updateTable();
-//                    updateCourseTable();
                 } else { // in list already
                     Log.d(TAG, "onClick: course: " + code + " in list");
                     executor.diskIO().execute(()->{
@@ -421,12 +403,8 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
                         addedCourse.setDescriptions(descriptions);
 
                         mCoursesViewModel.saveData(addedCourse);
-
-//                        updateCourseTable();
                     });
-//                    studentCourse.setCourseList(courses);
-//                    courseTable.setStudentCourse(studentCourse);
-//                    courseTable.updateTable();
+
 
                 }
 
@@ -524,12 +502,6 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
                 course.setCourseCode(code);
                 course.setProfessor(professor);
 
-
-                for (int i = 0; i < locations.length; i++) {
-                    for (int j = 0; j < locations[i].length; j++) {
-                        Log.d(TAG, "onClick: location:" + i + " " + j + " " + locations[i][j]);
-                    }
-                }
                 locations[row-1][col-1] = thisLocation;
                 course.setLocations(locations);
 
@@ -541,7 +513,6 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
 
                 courseTable.setStudentCourse(studentCourse);
                 courseTable.updateTable();
-//                updateCourseTable();
                 alertDialog.dismiss();
             }
         });
