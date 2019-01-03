@@ -219,8 +219,7 @@ public class CourseTableLayout extends LinearLayout {
                 CourseBlock sunText = (CourseBlock) tableRow.getChildAt(7);
                 sunText.setVisibility(View.GONE);
                 CourseBlock noTimeText = (CourseBlock) tableRow.getChildAt(8);
-                noTimeText.setVisibility(isDisplayNoTime ? View.INVISIBLE
-                        : View.GONE);
+                noTimeText.setVisibility(View.GONE);
                 if (i > 9) {
                     tableRow.setVisibility(isDisplayABCD ? View.VISIBLE
                             : View.GONE);

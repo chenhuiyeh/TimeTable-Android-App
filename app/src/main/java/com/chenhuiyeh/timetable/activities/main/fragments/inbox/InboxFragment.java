@@ -19,7 +19,7 @@ import com.chenhuiyeh.module_cache_data.viewmodel.CoursesViewModel;
 import com.chenhuiyeh.module_cache_data.viewmodel.InboxItemViewModel;
 import com.chenhuiyeh.timetable.R;
 import com.chenhuiyeh.timetable.activities.main.MainActivity;
-import com.chenhuiyeh.timetable.activities.main.fragments.courselist.CourseListFragment;
+
 import com.chenhuiyeh.timetable.activities.main.fragments.utils.ItemClickSupport;
 import com.chenhuiyeh.timetable.ui.LetterImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

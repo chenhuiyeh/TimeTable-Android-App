@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 
 import com.chenhuiyeh.timetable.R;
-import com.chenhuiyeh.timetable.activities.main.fragments.courselist.CourseListFragment;
 import com.chenhuiyeh.timetable.activities.main.fragments.inbox.InboxFragment;
 import com.chenhuiyeh.timetable.activities.main.fragments.TimeTableFragment;
 import com.nightonke.boommenu.BoomButtons.BoomButton;
@@ -27,14 +26,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity implements InboxFragment.OnFragmentInteractionListener,
-    CourseListFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements InboxFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "MainActivity";
 
     private InboxFragment inboxFragment;
     private TimeTableFragment timeTableFragment;
-    private CourseListFragment courseListFragment;
 
     private ActionBar mActionBar;
     private BoomMenuButton leftBmb;
@@ -125,13 +122,8 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
                     R.id.parentLayout, timeTableFragment
             ).commit();
 
-        } else if (index == 2) {
-            if (courseListFragment.isAdded()) return true;
-            setMainTitle(R.string.course_list_actionbar);
-            getSupportFragmentManager().beginTransaction().replace(
-                    R.id.parentLayout, courseListFragment
-            ).commit();
         }
+
 
         return true;
     }
@@ -139,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements InboxFragment.OnF
 
     private void initFragment() {
         inboxFragment = new InboxFragment();
-        courseListFragment = new CourseListFragment();
         timeTableFragment = new TimeTableFragment();
 
         if (!timeTableFragment.isAdded()) {
