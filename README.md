@@ -13,30 +13,28 @@ Open with Android Studio
 
 ### menu to navigate throughout the app
 
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869706.png)
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/menu.png)
 
 
 ### timetable ui
 
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545871066.png)
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/timetable.png)
 
 
 add a course to the timetable by clicking on any of the time slots in the timetable fragment
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/add-course.png)
 
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545866992.png)
+long click on course to delete item
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/delete-course.png)
 
-
-the course will be added to the timetable as well as appear on the course list section
-swipe left or right to delete
-
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869709.png)
-
+inbox fragment
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/inbox-list.png)
 
 adding a to-do item to the inbox
 swipe left or right to delete
 
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869735.png)
-![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/Screenshot_1545869738.png)
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/add-inbox.png)
+![alt text](https://github.com/chenhuiyeh/TimeTable-Android-App/blob/master/wiki-images/add-inbox-2.png)
 
 
 
