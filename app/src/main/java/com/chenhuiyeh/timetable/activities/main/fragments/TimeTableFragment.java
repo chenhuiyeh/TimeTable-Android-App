@@ -51,7 +51,6 @@ public class TimeTableFragment extends Fragment implements OnSaveDataListener {
     private StudentCourse studentCourse = new StudentCourse();
 
     List<CourseInfo> courses = new ArrayList<>();
-    public MediatorLiveData<List<CourseInfo>> currCourse = new MediatorLiveData<>();
 
     private CoursesViewModel mCoursesViewModel;
     private AppExecutor executor;

@@ -50,9 +50,7 @@ public class InboxFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private InboxItemViewModel inboxItemViewModel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,15 +66,7 @@ public class InboxFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InboxFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static InboxFragment newInstance(String param1, String param2) {
         InboxFragment fragment = new InboxFragment();
         Bundle args = new Bundle();
@@ -89,10 +79,6 @@ public class InboxFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -123,9 +109,10 @@ public class InboxFragment extends Fragment {
             @Override
             public void onChanged(List<InboxItem> inboxItems) {
                 Log.d(TAG, "onChanged: item added");
-                executor.diskIO().execute(()->{
-                    mInboxItemList = mInboxItemViewModel.loadDataFromDb();
-                });
+//                executor.diskIO().execute(()->{
+//                    mInboxItemList = mInboxItemViewModel.loadDataFromDb();
+//                });
+                mInboxItemList = inboxItems;
                 adapter.notifyDataSetChanged();
             }
         });
@@ -204,20 +191,17 @@ public class InboxFragment extends Fragment {
                 String description = descripEditText.getText().toString();
 
                 int id = adapter.getItemAtPosition(position).getId();
+                InboxItem item = mInboxItemList.get(position);
+                item.setDescription(description);
+                item.setTitle(title);
+                mInboxItemList.set(position, item);
+                adapter.notifyItemChanged(position);
+                adapter.notifyDataSetChanged();
 
                 executor.diskIO().execute(()->{
-                    InboxItem item = mInboxItemViewModel.loadDataByIdFromDb(id);
-                    item.setDescription(description);
-                    item.setTitle(title);
-
-                    executor.mainThread().execute(()->{
-                        mInboxItemList.set(position, item);
-                        adapter.notifyItemChanged(position);
-                        adapter.notifyDataSetChanged();
-                    });
-
                     mInboxItemViewModel.saveData(item);
                 });
+
 
                 alertDialog.dismiss();
             }

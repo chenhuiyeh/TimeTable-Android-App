@@ -53,7 +53,7 @@ public class InboxRepository {
         executor.diskIO().execute(()->{
             List<InboxItem> inboxItems = mInboxDao.loadDataFromDb();
             executor.mainThread().execute(()->{
-                items.setValue(inboxItems);
+                items.postValue(inboxItems);
             });
 
         });
@@ -66,7 +66,7 @@ public class InboxRepository {
         executor.diskIO().execute(()->{
             InboxItem itemData = mInboxDao.loadDataByIdFromDb(_id);
             executor.mainThread().execute(()->{
-                item.setValue(itemData);
+                item.postValue(itemData);
             });
 
         });
